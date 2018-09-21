@@ -1,0 +1,25 @@
+package hohserg.inventorymenu.notify
+
+import scala.collection.mutable
+
+trait OpenObservable[A,B] extends mutable.OpenHashMap[A, B] with Observable {
+  override def ++=(xs: TraversableOnce[(A, B)]): OpenObservable.this.type = {
+    canNotify=false
+    super.++=(xs)
+    canNotify = true
+    notifyAllObjects()
+    this
+  }
+  override def put(key: A, value: B): Option[B] = {
+    val r=super.put(key, value)
+    notifyAllObjects()
+    r
+  }
+
+  override def remove(key: A): Option[B] = {
+    val r=super.remove(key)
+    notifyAllObjects()
+    r
+  }
+
+}

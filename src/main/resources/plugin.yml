@@ -1,0 +1,12 @@
+name: InventoryMenu
+version: @version@
+main: hohserg.inventorymenu.PluginPreloader
+authors: [hohserg]
+description: Library for easy create powerful minecraft ui
+commands:
+  menu:
+    description: Test menu command
+    usage: /menu
+    permission: headhanter.command.hh
+    permission-message: You don't have <permission>
+

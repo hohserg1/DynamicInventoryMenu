@@ -5,20 +5,26 @@ Powerful api for create bukkit ui
 
 
 ## Usage
-*add library to you project
+add library to you project
 
-*create menu fabric(partial function)
+create menu fabric(partial function)
 
+```Scala
 val menu: Player => Menu = new Menu(_, "Title", size=45)
+```
 
-*add buttons and decorations
+add buttons and decorations
 
+```Scala
 val menu: Player => Menu = new Menu(_, "Title", size=45)
   .addDecoration(new ItemStack(Material.APPLE), 1, 1)
+  ```
   
-*when you need to open menu
+when you need to open menu
 
+```Scala
 menu(player).open()
+```
 
 ### todo...
 

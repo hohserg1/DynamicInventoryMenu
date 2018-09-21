@@ -1,10 +1,10 @@
 # DynamicInventoryMenu
 Powerful api for create bukkit ui
 
-###Development is contious
+### Development is contious
 
 
-##Usage
+## Usage
 *add library to you project
 
 *create menu fabric(partial function)
@@ -17,7 +17,7 @@ val menu: Player => Menu = new Menu(_, "Title", size=45)
 *when you need to open menu
 menu(player).open()
 
-###todo...
+### todo...
 
 
 

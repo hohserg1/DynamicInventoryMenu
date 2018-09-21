@@ -16,7 +16,7 @@ class Menu(val player: Player, val name: String, val size: Int) {
   private val noAction: Player => Unit = _ => ()
 
   def addDecoration(item: ItemStack, x: Int, y: Int): this.type =
-    addDecoration(ConstSource(item),x,y)
+    addDecoration(ConstSource(item), x, y)
 
   def addButton(item: ItemStack, x: Int, y: Int, clickHandler: Player => Unit): this.type = {
     buttons += Button(this, x, y, ConstSource(item), clickHandler)
@@ -42,7 +42,7 @@ class Menu(val player: Player, val name: String, val size: Int) {
   }
 
   def onClick(player: Player, clicked: ItemStack): Unit = {
-    clickHandlersMap.get(clicked).orElse(clickHandlersList.find(_._1.getItem == clicked).map(_._2)).foreach(_(player))
+    clickHandlersMap.get(clicked).orElse(clickHandlersList.find(_._1.getItem == clicked).map(_._2)).foreach(_ (player))
   }
 
   val clickHandlersList = new mutable.ListBuffer[(DataSource, Player => Unit)]()

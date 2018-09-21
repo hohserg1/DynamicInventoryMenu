@@ -2,7 +2,7 @@ package hohserg.inventorymenu.menu
 
 import hohserg.inventorymenu.notify.Notified
 
-trait MenuItem extends Notified{
+trait MenuItem extends Notified {
   def menu: Menu
   def x: Int
   def y: Int

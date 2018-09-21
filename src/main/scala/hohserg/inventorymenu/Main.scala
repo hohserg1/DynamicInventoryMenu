@@ -12,7 +12,6 @@ import scala.collection.mutable
 
 object Main {
   def onEnable(): Unit = {
-
     Bukkit.getPluginManager.registerEvents(new MenuListener, plugin)
   }
 

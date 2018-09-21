@@ -7,6 +7,6 @@ commands:
 # menu:
 #   description: Test menu command
 #   usage: /menu
-#   permission: headhanter.command.hh
+#   permission: inventorymenu.command.menu
 #   permission-message: You don't have <permission>
 

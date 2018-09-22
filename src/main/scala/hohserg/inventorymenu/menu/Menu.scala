@@ -59,6 +59,7 @@ class Menu(val player: Player, val name: String, val size: Int) {
 }
 
 object Menu {
+  def applyOrCreate(player: Player, name: String, create:Player=>Menu): Menu = apply(name,player).getOrElse(create(player))
   def apply(name: String, player: Player): Option[Menu] = map.get((name, player))
 
   val map = new mutable.OpenHashMap[(String, Player), Menu]

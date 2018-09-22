@@ -1,3 +1,5 @@
 package hohserg.inventorymenu.menu
 
-case class Decoration(menu: Menu, x: Int, y: Int, source: DataSource) extends MenuItem
+import org.bukkit.inventory.ItemStack
+
+case class Decoration(menu: Menu, x: Int, y: Int, source: DataSource[ItemStack]) extends MenuItem

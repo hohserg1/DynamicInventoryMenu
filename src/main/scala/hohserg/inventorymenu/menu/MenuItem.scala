@@ -1,12 +1,13 @@
 package hohserg.inventorymenu.menu
 
 import hohserg.inventorymenu.notify.Notified
+import org.bukkit.inventory.ItemStack
 
 trait MenuItem extends Notified {
   def menu: Menu
   def x: Int
   def y: Int
-  def source: DataSource
+  def source: DataSource[ItemStack]
 
   source.addNotified(this)
 

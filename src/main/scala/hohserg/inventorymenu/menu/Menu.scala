@@ -25,12 +25,12 @@ class Menu(val player: Player, val name: String, val size: Int) {
     this
   }
 
-  def addDecoration(item: DataSource, x: Int, y: Int): this.type = {
+  def addDecoration(item: DataSource[ItemStack], x: Int, y: Int): this.type = {
     decorations += Decoration(this, x, y, item)
     this
   }
 
-  def addButton(item: DataSource, x: Int, y: Int, clickHandler: Player => Unit): this.type = {
+  def addButton(item: DataSource[ItemStack], x: Int, y: Int, clickHandler: Player => Unit): this.type = {
     buttons += Button(this, x, y, item, clickHandler)
     if (clickHandler != noAction)
       registerHandler(item, clickHandler)
@@ -45,11 +45,11 @@ class Menu(val player: Player, val name: String, val size: Int) {
     clickHandlersMap.get(clicked).orElse(clickHandlersList.find(_._1.getItem == clicked).map(_._2)).foreach(_ (player))
   }
 
-  val clickHandlersList = new mutable.ListBuffer[(DataSource, Player => Unit)]()
+  val clickHandlersList = new mutable.ListBuffer[(DataSource[ItemStack], Player => Unit)]()
 
   val clickHandlersMap = new mutable.OpenHashMap[ItemStack, Player => Unit]()
 
-  def registerHandler(item: DataSource, clickHandler: Player => Unit): Unit =
+  def registerHandler(item: DataSource[ItemStack], clickHandler: Player => Unit): Unit =
     clickHandlersList += item -> clickHandler
 
   def registerHandler(item: ItemStack, clickHandler: Player => Unit): Unit =

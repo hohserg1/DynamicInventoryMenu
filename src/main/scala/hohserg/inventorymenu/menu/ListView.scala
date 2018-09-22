@@ -28,7 +28,7 @@ class ListView[A](player: Player, name: String, size: Int, collection: Traversab
 
   def getIconFor(direction: Int, color: DyeColor): ItemStack = {
     if (direction < 0)
-      lorize(banner(PatternType.TRIANGLE_BOTTOM, color), "Вверх")
+      banner(PatternType.TRIANGLE_BOTTOM, color)
     else
       banner(PatternType.TRIANGLE_TOP, color)
   }
@@ -38,10 +38,8 @@ class ListView[A](player: Player, name: String, size: Int, collection: Traversab
       .addPageIndicator(x, y, color, text._2)
       .addScrollButton(1, x, y + 1, color, text._3)
 
-
   def addScrollButton(direction: Int, x: Int, y: Int, color: DyeColor, text: String): this.type =
     addScrollButton(direction, x, y, getIconFor(direction, color), text)
-
 
   private def listingPage(direction: Int): Player => Unit =
     (_: Player) => {
@@ -49,7 +47,6 @@ class ListView[A](player: Player, name: String, size: Int, collection: Traversab
       if (newPage >= 0 && newPage < source.pageCount)
         source.page = newPage
     }
-
 
   def addScrollButton(direction: Int, x: Int, y: Int, item: ItemStack, text: String): this.type =
     addButton(lorize(item, text), x, y, listingPage(direction))

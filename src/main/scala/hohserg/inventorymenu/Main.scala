@@ -20,7 +20,6 @@ object Main {
   }
 
   val map = new mutable.OpenHashMap[String, Int] with OpenObservable[String, Int]
-  map.toList
   for (i <- 0 to 100)
     map += ("test" + i) -> 1
 
@@ -46,7 +45,8 @@ object Main {
           case _ :: Nil =>
             menu(player).open()
           case _ =>
-            menu2(player).open()
+            val bindedmenu=menu2(player)
+            bindedmenu.open()
         }
       case _ =>
     }

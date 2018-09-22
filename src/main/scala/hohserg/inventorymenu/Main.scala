@@ -20,6 +20,7 @@ object Main {
   }
 
   val map = new mutable.OpenHashMap[String, Int] with OpenObservable[String, Int]
+  map.toList
   for (i <- 0 to 100)
     map += ("test" + i) -> 1
 
@@ -33,9 +34,9 @@ object Main {
   }
 
   val menu: Player => Menu = new Menu(_, "Test", 45)
-    .addDecoration(SelectedSource[String, Int](map, 0, tupleToStack), 1, 1)
+    .addDecoration(SelectedSource[(String, Int)](map, 0, tupleToStack), 1, 1)
 
-  val menu2: Player => ListView[String, Int] = new ListView(_, "TestListView", 45, map, tupleToStack, Area(1, 1, 7, 3))
+  val menu2: Player => ListView[(String, Int)] = new ListView(_, "TestListView", 45, map, tupleToStack, Area(1, 1, 7, 3))
     .addScroll(0, 2, DyeColor.CYAN, ("Вверх", "Страница %d из %d", "Вниз"))
 
   def onCommand(sender: CommandSender, command: Command, label: String, args: Array[String]): Boolean = {

@@ -61,7 +61,7 @@ class Menu(val player: Player, val name: String, val size: Int) {
 object Menu {
   def apply(name: String, player: Player): Option[Menu] = map.get((name, player))
 
-  val map = new mutable.OpenHashMap[(String, Player), Menu]
+  val map = new mutable.WeakHashMap[(String, Player), Menu]
 
   def register(menu: Menu, player: Player): Unit = {
     map += (menu.name, player) -> menu

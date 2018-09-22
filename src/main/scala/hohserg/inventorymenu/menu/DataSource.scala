@@ -1,6 +1,6 @@
 package hohserg.inventorymenu.menu
 
-import hohserg.inventorymenu.notify.{Observable, Pipe}
+import hohserg.inventorymenu.notify.{CollectionObservable, Observable, Pipe}
 import org.bukkit.inventory.ItemStack
 
 import scala.collection.mutable.ArrayBuffer
@@ -38,17 +38,22 @@ case class ListedSource[A](collection: TraversableOnce[A] with Observable, pageS
 
   def page_=(value: Int): Unit = {
     _page = value
-    _pageMap.clear()
-    _pageMap++= updatedPageContent()
-    onUpdate()
+    updatedPageContent()
   }
 
-  private var _pageMap = new ArrayBuffer[A] with Observable
+  private var _pageMap = new ArrayBuffer[A] with CollectionObservable[A]
+  updatedPageContent()
 
-  private def updatedPageContent(): List[A] = {
+  private def updatedPageContent():Unit = {
     val pageStart = page * pageSize
-    collection.toList.slice(pageStart, pageStart + pageSize)
+    _pageMap.clear()
+    _pageMap++= collection.toList.slice(pageStart, pageStart + pageSize)
   }
 
   override def getItem: ArrayBuffer[A] with Observable = _pageMap
+
+  override def onUpdate(): Unit = {
+    super.onUpdate()
+    updatedPageContent()
+  }
 }

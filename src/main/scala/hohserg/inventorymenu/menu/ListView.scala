@@ -1,17 +1,17 @@
 package hohserg.inventorymenu.menu
 
 import hohserg.inventorymenu.menu.ListView.Area
-import hohserg.inventorymenu.notify.OpenObservable
-import org.bukkit.{DyeColor, Material}
+import hohserg.inventorymenu.notify.Observable
 import org.bukkit.block.banner.PatternType
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
+import org.bukkit.{DyeColor, Material}
 
-import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 
-class ListView[A, B](player: Player, name: String, size: Int, collection: OpenObservable[A, B], visualize: ((A, B)) => ItemStack, area: Area, borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE)) extends Menu(player, name, size) {
+class ListView[A](player: Player, name: String, size: Int, collection: TraversableOnce[A] with Observable, visualize: A => ItemStack, area: Area, borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE)) extends Menu(player, name, size) {
   val source = ListedSource(collection, area.square, visualize)
-  val page = source.pageMap
+  val page = source.getItem
 
   for {
     (x, y) <- Area(0, 0, 8, 4)
@@ -55,7 +55,7 @@ class ListView[A, B](player: Player, name: String, size: Int, collection: OpenOb
     addButton(lorize(item, text), x, y, listingPage(direction))
 
   def addPageIndicator(x: Int, y: Int, item: ItemStack, text: String): this.type =
-    addDecoration(VariableSource[mutable.OpenHashMap[A, B]](page, _ => lorize(item, text.format(source.page + 1, source.pageCount))), x, y)
+    addDecoration(VariableSource[ArrayBuffer[A] with Observable](page, _ => lorize(item, text.format(source.page + 1, source.pageCount))), x, y)
 
   def addPageIndicator(x: Int, y: Int, color: DyeColor, text: String): this.type =
     addPageIndicator(x, y, banner(PatternType.BASE, color), text)

@@ -25,7 +25,7 @@ class Menu(val player: Player, val name: String, val size: Int) {
     addButton(ConstSource(item), x, y,clickHandler)
 
 
-  def addButtons(buttons:(DataSource[ItemStack],Int, Int,ClickHandler)*): this.type = {
+  def addButtons(buttons:Seq[(DataSource[ItemStack],Int, Int,ClickHandler)]): this.type = {
     buttons.foreach(i=>addButton(i._1,i._2,i._3,i._4))
     this
   }
@@ -38,7 +38,7 @@ class Menu(val player: Player, val name: String, val size: Int) {
   def addDecoration(item: ItemStack, x: Int, y: Int): this.type =
     addDecoration(ConstSource(item), x, y)
 
-  def addDecorations(decorations:(DataSource[ItemStack],Int, Int)*): this.type = {
+  def addDecorations(decorations:Seq[(DataSource[ItemStack],Int, Int)]): this.type = {
     decorations.foreach(i=>addDecoration(i._1,i._2,i._3))
     this
   }

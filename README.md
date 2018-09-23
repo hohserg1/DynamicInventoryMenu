@@ -1,7 +1,7 @@
 # DynamicInventoryMenu
 Powerful api for create dynamically updated bukkit ui
 
-### Development is contious
+### Development is continues
 
 
 ## Usage
@@ -29,7 +29,7 @@ menu(player).open()
 ## To do...
 - [x] Basic architecture
 - [x] List view for OpenHashMap
-- [ ] List view for any collection
+- [x] List view for any collection
 - [ ] Java syntax and collection support
 - [ ] Some stuffs
 

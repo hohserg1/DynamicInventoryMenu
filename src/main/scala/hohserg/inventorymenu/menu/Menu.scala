@@ -18,6 +18,10 @@ class Menu(val player: Player, val name: String, val size: Int) {
 
   def addButton(item: DataSource[ItemStack], x: Int, y: Int, clickHandler: ClickHandler): this.type = {
     buttons += Button(this, x, y, item, clickHandler)
+    item match{
+      case ConstSource(itemStack)=>registerHandler(itemStack,clickHandler)
+      case _=>registerHandler(item,clickHandler)
+    }
     this
   }
 

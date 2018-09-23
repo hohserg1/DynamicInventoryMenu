@@ -1,7 +1,7 @@
 # DynamicInventoryMenu
 Powerful api for create dynamically updated bukkit ui
 
-### Development is contious
+### Development is continues
 
 
 ## Usage

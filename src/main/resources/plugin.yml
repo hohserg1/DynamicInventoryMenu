@@ -3,6 +3,7 @@ version: @version@
 main: hohserg.inventorymenu.PluginPreloader
 authors: [hohserg]
 description: Library for easy create powerful minecraft ui
+load: startup
 commands:
 # menu:
 #   description: Test menu command

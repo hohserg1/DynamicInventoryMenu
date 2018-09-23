@@ -1,5 +1,6 @@
 package hohserg.inventorymenu.menu
 
+import hohserg.inventorymenu.menu.Menu.ClickHandler
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -13,12 +14,12 @@ class Menu(val player: Player, val name: String, val size: Int) {
   val buttons = new ListBuffer[Button]()
   val decorations = new ListBuffer[Decoration]()
 
-  private val noAction: Player => Unit = _ => ()
+  private val noAction: ClickHandler = _ => ()
 
   def addDecoration(item: ItemStack, x: Int, y: Int): this.type =
     addDecoration(ConstSource(item), x, y)
 
-  def addButton(item: ItemStack, x: Int, y: Int, clickHandler: Player => Unit): this.type = {
+  def addButton(item: ItemStack, x: Int, y: Int, clickHandler: ClickHandler): this.type = {
     buttons += Button(this, x, y, ConstSource(item), clickHandler)
     if (clickHandler != noAction)
       registerHandler(item, clickHandler)
@@ -30,7 +31,7 @@ class Menu(val player: Player, val name: String, val size: Int) {
     this
   }
 
-  def addButton(item: DataSource[ItemStack], x: Int, y: Int, clickHandler: Player => Unit): this.type = {
+  def addButton(item: DataSource[ItemStack], x: Int, y: Int, clickHandler: ClickHandler): this.type = {
     buttons += Button(this, x, y, item, clickHandler)
     if (clickHandler != noAction)
       registerHandler(item, clickHandler)
@@ -45,21 +46,24 @@ class Menu(val player: Player, val name: String, val size: Int) {
     clickHandlersMap.get(clicked).orElse(clickHandlersList.find(_._1.getItem == clicked).map(_._2)).foreach(_ (player))
   }
 
-  val clickHandlersList = new mutable.ListBuffer[(DataSource[ItemStack], Player => Unit)]()
+  val clickHandlersList = new mutable.ListBuffer[(DataSource[ItemStack], ClickHandler)]()
 
-  val clickHandlersMap = new mutable.OpenHashMap[ItemStack, Player => Unit]()
+  val clickHandlersMap = new mutable.OpenHashMap[ItemStack, ClickHandler]()
 
-  def registerHandler(item: DataSource[ItemStack], clickHandler: Player => Unit): Unit =
+  def registerHandler(item: DataSource[ItemStack], clickHandler: ClickHandler): Unit =
     clickHandlersList += item -> clickHandler
 
-  def registerHandler(item: ItemStack, clickHandler: Player => Unit): Unit =
+  def registerHandler(item: ItemStack, clickHandler: ClickHandler): Unit =
     clickHandlersMap += item -> clickHandler
 
 
 }
 
 object Menu {
-  def applyOrCreate(player: Player, name: String, create:Player=>Menu): Menu = apply(name,player).getOrElse(create(player))
+  type ClickHandler = Player => Any
+
+  def applyOrCreate(player: Player, name: String, create: Player => Menu): Menu = apply(name, player).getOrElse(create(player))
+
   def apply(name: String, player: Player): Option[Menu] = map.get((name, player))
 
   val map = new mutable.OpenHashMap[(String, Player), Menu]

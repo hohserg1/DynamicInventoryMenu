@@ -9,14 +9,14 @@ trait DataSource[A] extends Observable with Pipe {
   def getItem: A
 }
 
-case class SelectedSource[A](collection: TraversableOnce[A] with Observable, index: Int, visualize: A => ItemStack) extends DataSource[ItemStack]{
+case class SelectedSource[A](collection: TraversableOnce[A] with Observable, index: Int, visualize: A => ItemStack, alternative: ItemStack=null) extends DataSource[ItemStack]{
   collection.addNotified(this)
 
   override def getItem: ItemStack =
     Option(collection.toList)
       .filter(_.size > index)
       .map(i => visualize(i(index)))
-      .orNull
+      .getOrElse(alternative)
 }
 
 case class ConstSource(itemStack: ItemStack) extends DataSource[ItemStack] {

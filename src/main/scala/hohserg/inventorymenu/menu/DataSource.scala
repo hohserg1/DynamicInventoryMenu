@@ -30,6 +30,8 @@ case class VariableSource[A](variable: A with Observable, visualize: A => ItemSt
 }
 
 case class ListedSource[A](collection: TraversableOnce[A] with Observable, pageSize: Int, visualize: A => ItemStack) extends DataSource[ArrayBuffer[A] with Observable]{
+  collection.addNotified(this)
+  
   def pageCount: Int = math.ceil(collection.size.toDouble / pageSize).toInt
 
   private[this] var _page = 0

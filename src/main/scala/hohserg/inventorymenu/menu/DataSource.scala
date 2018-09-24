@@ -29,9 +29,9 @@ case class VariableSource[A](variable: A with Observable, visualize: A => ItemSt
   override def getItem: ItemStack = visualize(variable)
 }
 
-case class ListedSource[A](collection: TraversableOnce[A] with Observable, pageSize: Int, visualize: A => ItemStack) extends DataSource[ArrayBuffer[A] with Observable]{
-  collection.addNotified(this)
-  
+case class ListedSource[A](collection: TraversableOnce[A] with Observable, pageSize: Int, visualize: A => ItemStack) extends DataSource[ArrayBuffer[A] with Observable] {
+  private val _pageMap = new ArrayBuffer[A] with CollectionObservable[A]
+
   def pageCount: Int = math.ceil(collection.size.toDouble / pageSize).toInt
 
   private[this] var _page = 0
@@ -43,16 +43,17 @@ case class ListedSource[A](collection: TraversableOnce[A] with Observable, pageS
     updatedPageContent()
   }
 
-  private var _pageMap = new ArrayBuffer[A] with CollectionObservable[A]
-  updatedPageContent()
 
-  private def updatedPageContent():Unit = {
+  private def updatedPageContent(): Unit = {
     val pageStart = page * pageSize
+    println(_pageMap)
     _pageMap.clear()
-    _pageMap++= collection.toList.slice(pageStart, pageStart + pageSize)
+    _pageMap ++= collection.toList.slice(pageStart, pageStart + pageSize)
   }
 
   override def getItem: ArrayBuffer[A] with Observable = _pageMap
+
+  collection.addNotified(this)
 
   override def onUpdate(): Unit = {
     super.onUpdate()

@@ -9,7 +9,7 @@ trait DataSource[A] extends Observable with Pipe {
   def getItem: A
 }
 
-case class SelectedSource[A](collection: TraversableOnce[A] with Observable, index: Int, visualize: A => ItemStack, alternative: ItemStack=null) extends DataSource[ItemStack]{
+case class SelectedSource[A](collection: TraversableOnce[A] with Observable, index: Int, visualize: A => ItemStack, alternative: ItemStack = null) extends DataSource[ItemStack] {
   collection.addNotified(this)
 
   override def getItem: ItemStack =
@@ -23,7 +23,7 @@ case class ConstSource(itemStack: ItemStack) extends DataSource[ItemStack] {
   override def getItem: ItemStack = itemStack
 }
 
-case class VariableSource[A](variable: A with Observable, visualize: A => ItemStack) extends DataSource[ItemStack]{
+case class VariableSource[A](variable: A with Observable, visualize: A => ItemStack) extends DataSource[ItemStack] {
   variable.addNotified(this)
 
   override def getItem: ItemStack = visualize(variable)

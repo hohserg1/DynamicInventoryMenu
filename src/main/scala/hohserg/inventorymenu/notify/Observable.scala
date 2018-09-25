@@ -4,14 +4,14 @@ import scala.collection.mutable.ListBuffer
 import scala.ref.WeakReference
 
 trait Observable {
-  protected val notifiedObjects = new ListBuffer[WeakReference[Notified]]()
+  @transient protected val notifiedObjects = new ListBuffer[WeakReference[Notified]]()
 
   def addNotified(e: Notified): Unit = {
     notifiedObjects += WeakReference(e)
     e.onUpdate()
   }
 
-  protected var canNotify = true
+  @transient protected var canNotify = true
 
   def notifyAllObjects(): Unit = if (canNotify) notifiedObjects.foreach{n=>
     val o=n.get

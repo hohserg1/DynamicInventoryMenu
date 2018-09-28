@@ -13,20 +13,20 @@ class Menu(val player: Player, val name: String, val size: Int) {
   private[menu] val inv = Bukkit.createInventory(null, size, name)
   val items = new ListBuffer[MenuItem]()
 
-  def ++=(button: Seq[Menu => MenuItem]):this.type = {
+  def ++=(button: Seq[Menu => MenuItem]): this.type = {
     button.foreach(+=)
     this
   }
 
-  def +=(button: Menu => MenuItem):this.type = {
+  def +=(button: Menu => MenuItem): this.type = {
     val btn = button(this)
     items += btn
-    btn match{
-      case Button(_,_,_,ConstSource(itemStack),clickHandler)=>
+    btn match {
+      case Button(_, _, _, ConstSource(itemStack), clickHandler) =>
         registerHandler(itemStack, clickHandler)
-      case Button(_,_,_,source,clickHandler)=>
+      case Button(_, _, _, source, clickHandler) =>
         registerHandler(source, clickHandler)
-      case _=>
+      case _ =>
     }
     this
   }

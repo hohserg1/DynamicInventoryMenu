@@ -30,11 +30,11 @@ object Main {
       r
   }
 
-  val menu2: Player => Menu = Menu.applyOrCreate(_,"TestListView",
+  val menu2: Player => Menu = Menu.applyOrCreate(_, "TestListView",
     new ListView(_, "TestListView", 45, map, tupleToStack, Area(1, 1, 7, 3))
       .addScroll(0, 2, DyeColor.CYAN, ("Вверх", "Страница %d из %d", "Вниз"))
   )
-  var i=0
+  var i = 0
 
   def onCommand(sender: CommandSender, command: Command, label: String, args: Array[String]): Boolean = {
     sender match {
@@ -42,7 +42,7 @@ object Main {
         args.toList match {
           case _ :: Nil =>
             map += ("test" + i) -> 1
-            i+=1
+            i += 1
           case _ =>
             menu2(player).open()
         }

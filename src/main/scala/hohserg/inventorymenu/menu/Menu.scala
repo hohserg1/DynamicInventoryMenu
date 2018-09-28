@@ -11,42 +11,25 @@ import scala.collection.mutable.ListBuffer
 class Menu(val player: Player, val name: String, val size: Int) {
   Menu.register(this, player)
   private[menu] val inv = Bukkit.createInventory(null, size, name)
-  val buttons = new ListBuffer[Button]()
-  val decorations = new ListBuffer[Decoration]()
+  val items = new ListBuffer[MenuItem]()
 
-  private val noAction: ClickHandler = _ => ()
+  def ++=(button: Seq[Menu => MenuItem]):this.type = {
+    button.foreach(+=)
+    this
+  }
 
-  def addButton(item: DataSource[ItemStack], x: Int, y: Int, clickHandler: ClickHandler): this.type = {
-    buttons += Button(this, x, y, item, clickHandler)
-    item match{
-      case ConstSource(itemStack)=>registerHandler(itemStack,clickHandler)
-      case _=>registerHandler(item,clickHandler)
+  def +=(button: Menu => MenuItem):this.type = {
+    val btn = button(this)
+    items += btn
+    btn match{
+      case Button(_,_,_,ConstSource(itemStack),clickHandler)=>
+        registerHandler(itemStack, clickHandler)
+      case Button(_,_,_,source,clickHandler)=>
+        registerHandler(source, clickHandler)
+      case _=>
     }
     this
   }
-
-  def addButton(item: ItemStack, x: Int, y: Int, clickHandler: ClickHandler): this.type =
-    addButton(ConstSource(item), x, y,clickHandler)
-
-
-  def addButtons(buttons:Seq[(DataSource[ItemStack],Int, Int,ClickHandler)]): this.type = {
-    buttons.foreach(i=>addButton(i._1,i._2,i._3,i._4))
-    this
-  }
-
-  def addDecoration(item: DataSource[ItemStack], x: Int, y: Int): this.type = {
-    decorations += Decoration(this, x, y, item)
-    this
-  }
-
-  def addDecoration(item: ItemStack, x: Int, y: Int): this.type =
-    addDecoration(ConstSource(item), x, y)
-
-  def addDecorations(decorations:Seq[(DataSource[ItemStack],Int, Int)]): this.type = {
-    decorations.foreach(i=>addDecoration(i._1,i._2,i._3))
-    this
-  }
-
 
   def open() = {
     player openInventory inv

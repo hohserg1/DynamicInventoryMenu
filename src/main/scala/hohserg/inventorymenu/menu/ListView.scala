@@ -6,6 +6,7 @@ import org.bukkit.block.banner.PatternType
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.{DyeColor, Material}
+import hohserg.inventorymenu.utils.ItemUtils._
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -17,14 +18,12 @@ class ListView[A](player: Player, name: String, size: Int, collection: Traversab
     (x, y) <- Area(0, 0, 8, 4)
     if !area.contains(x, y)
   }
-    addDecoration(borderFiller, x, y)
+    this += Decoration(x, y, borderFiller)
 
   for {
     (x, y) <- area
   }
-    addDecoration(SelectedSource(page, x - area.x1 + (y - area.y1) * (area.x2 - area.x1 + 1), visualize), x, y)
-
-  import hohserg.inventorymenu.utils.ItemUtils._
+    this += Decoration(x, y, SelectedSource(page, x - area.x1 + (y - area.y1) * (area.x2 - area.x1 + 1), visualize))
 
   def getIconFor(direction: Int, color: DyeColor): ItemStack = {
     if (direction < 0)
@@ -38,9 +37,6 @@ class ListView[A](player: Player, name: String, size: Int, collection: Traversab
       .addPageIndicator(x, y, color, text._2)
       .addScrollButton(1, x, y + 1, color, text._3)
 
-  def addScrollButton(direction: Int, x: Int, y: Int, color: DyeColor, text: String): this.type =
-    addScrollButton(direction, x, y, getIconFor(direction, color), text)
-
   private def listingPage(direction: Int): Player => Unit =
     (_: Player) => {
       val newPage = source.page + direction
@@ -48,11 +44,14 @@ class ListView[A](player: Player, name: String, size: Int, collection: Traversab
         source.page = newPage
     }
 
+  def addScrollButton(direction: Int, x: Int, y: Int, color: DyeColor, text: String): this.type =
+    addScrollButton(direction, x, y, getIconFor(direction, color), text)
+
   def addScrollButton(direction: Int, x: Int, y: Int, item: ItemStack, text: String): this.type =
-    addButton(lorize(item, text), x, y, listingPage(direction))
+    this += Button(x, y, lorize(item, text), listingPage(direction))
 
   def addPageIndicator(x: Int, y: Int, item: ItemStack, text: String): this.type =
-    addDecoration(VariableSource[ArrayBuffer[A] with Observable](page, _ => lorize(item, text.format(source.page + 1, source.pageCount))), x, y)
+    this += Decoration(x, y, VariableSource[ArrayBuffer[A] with Observable](page, _ => lorize(item, text.format(source.page + 1, source.pageCount))))
 
   def addPageIndicator(x: Int, y: Int, color: DyeColor, text: String): this.type =
     addPageIndicator(x, y, banner(PatternType.BASE, color), text)

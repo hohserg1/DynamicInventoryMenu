@@ -46,7 +46,6 @@ case class ListedSource[A](collection: TraversableOnce[A] with Observable, pageS
 
   private def updatedPageContent(): Unit = {
     val pageStart = page * pageSize
-    println(_pageMap)
     _pageMap.clear()
     _pageMap ++= collection.toList.slice(pageStart, pageStart + pageSize)
   }

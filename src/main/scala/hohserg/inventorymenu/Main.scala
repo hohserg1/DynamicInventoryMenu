@@ -1,7 +1,7 @@
 package hohserg.inventorymenu
 
 import hohserg.inventorymenu.menu.ListView.Area
-import hohserg.inventorymenu.menu.{ListView, Menu, MenuListener, SelectedSource}
+import hohserg.inventorymenu.menu.{ListView, Menu, MenuListener}
 import hohserg.inventorymenu.notify.OpenObservable
 import org.bukkit.command.{Command, CommandSender}
 import org.bukkit.entity.Player
@@ -29,9 +29,6 @@ object Main {
       r.setItemMeta(meta)
       r
   }
-
-  val menu: Player => Menu = new Menu(_, "Test", 45)
-    .addDecoration(SelectedSource[(String, Int)](map, 0, tupleToStack), 1, 1)
 
   val menu2: Player => Menu = Menu.applyOrCreate(_,"TestListView",
     new ListView(_, "TestListView", 45, map, tupleToStack, Area(1, 1, 7, 3))

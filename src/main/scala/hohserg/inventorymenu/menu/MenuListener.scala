@@ -11,8 +11,8 @@ class MenuListener extends Listener {
     val clicked = e.getCurrentItem
     val inventory = e.getInventory
     Menu(inventory.getName, player).foreach { menu =>
-      menu.onClick(player, clicked)
       e.setCancelled(true)
+      menu.onClick(player, clicked)
     }
   }
 }

@@ -16,8 +16,8 @@ val menu: Player => Menu = Menu.applyOrCreate("Title",new Menu(_, _, size=45))
 - add buttons and decorations
 
 ```Scala
-val menu: Player => Menu = new Menu(_, "Title", size=45)
-  .addDecoration(new ItemStack(Material.APPLE), 1, 1)
+val menu: Player => Menu = Menu.applyOrCreate("Title",new Menu(_, _, size=45)
+  .addDecoration(new ItemStack(Material.APPLE), 1, 1))
   ```
   
 - when you need to open menu

@@ -5,7 +5,7 @@ authors: [hohserg]
 description: Library for easy create powerful minecraft ui
 load: startup
 commands:
- menu:
+ testmenu:
    description: Test menu command
    usage: /menu
    permission: inventorymenu.command.menu

@@ -39,9 +39,9 @@ class Menu(val player: Player, val name: String, val size: Int) {
     clickHandlersMap.get(clicked).orElse(clickHandlersList.find(_._1.getItem == clicked).map(_._2)).foreach(_ (player))
   }
 
-  val clickHandlersList = new mutable.ListBuffer[(DataSource[ItemStack], ClickHandler)]()
+  private val clickHandlersList = new mutable.ListBuffer[(DataSource[ItemStack], ClickHandler)]()
 
-  val clickHandlersMap = new mutable.OpenHashMap[ItemStack, ClickHandler]()
+  private val clickHandlersMap = new mutable.OpenHashMap[ItemStack, ClickHandler]()
 
   def registerHandler(item: DataSource[ItemStack], clickHandler: ClickHandler): Unit =
     clickHandlersList += item -> clickHandler
@@ -54,6 +54,8 @@ class Menu(val player: Player, val name: String, val size: Int) {
 
 object Menu {
   type ClickHandler = Player => Any
+
+  def applyOrCreate(name: String, create: (Player, String)=> Menu)(player: Player): Menu = applyOrCreate(player,name,create(_,name))
 
   def applyOrCreate(player: Player, name: String, create: Player => Menu): Menu = apply(name, player).getOrElse(create(player))
 

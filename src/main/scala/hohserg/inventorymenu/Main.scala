@@ -20,6 +20,7 @@ object Main {
   }
 
   val map = new mutable.OpenHashMap[String, Int] with OpenObservable[String, Int]
+  for(i<-0 to 100)map+=("test"+i)->1
 
   val tupleToStack: ((String, Int)) => ItemStack = {
     case (name: String, i: Int) =>
@@ -30,8 +31,8 @@ object Main {
       r
   }
 
-  val menu2: Player => Menu = Menu.applyOrCreate(_, "TestListView",
-    new ListView(_, "TestListView", 45, map, tupleToStack, Area(1, 1, 7, 3))
+  val menu2: Player => Menu = Menu.applyOrCreate("TestListView",
+    new ListView(_, _, 45, map, tupleToStack, Area(1, 1, 7, 3))
       .addScroll(0, 2, DyeColor.CYAN, ("Вверх", "Страница %d из %d", "Вниз"))
   )
   var i = 0

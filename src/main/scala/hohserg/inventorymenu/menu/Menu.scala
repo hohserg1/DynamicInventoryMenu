@@ -1,31 +1,68 @@
 package hohserg.inventorymenu.menu
 
+import hohserg.inventorymenu.menu.ListView.Area
 import hohserg.inventorymenu.menu.Menu.ClickHandler
+import hohserg.inventorymenu.menu.menuitems._
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
 
-class Menu(val player: Player, val name: String, val size: Int) {
+class Menu(val player: Player, val name: String, val height: Int) {
+  val width = 9
+  val size: Int = height * width
+
   Menu.register(this, player)
   private[menu] val inv = Bukkit.createInventory(null, size, name)
-  val items = new ListBuffer[MenuItem]()
+  val items = new Array[Array[MenuItem]](9).map(_ => new Array[MenuItem](height))
 
   def ++=(button: Seq[Menu => MenuItem]): this.type = {
     button.foreach(+=)
     this
   }
 
+  def addBorder(borderFiller: ItemStack): this.type = {
+    for {
+      (x, y) <- Area(0, 0, width - 1, height - 1)
+      if !Area(1, 1, width - 2, height - 2).contains(x, y)
+    }
+      this += Decoration(x, y, borderFiller)
+    this
+  }
+
+  def -=(x: Int, y: Int): this.type = {
+    val menuItem = items(x)(y)
+    menuItem match {
+      case clickable: Clickable =>
+        val handler = clickable.clickHandler
+        clickable.source match {
+          case ConstSource(itemStack) =>
+            clickHandlersMap -= itemStack
+          case source =>
+            clickHandlersList.remove(clickHandlersList.indexOf((source,handler)))
+        }
+      case _ =>
+    }
+    this
+  }
+
   def +=(button: Menu => MenuItem): this.type = {
     val btn = button(this)
-    items += btn
+
+    Option(items(btn.x)(btn.y)).foreach(_ => -=(btn.x, btn.y))
+
+    items(btn.x)(btn.y) = btn
     btn match {
-      case Button(_, _, _, ConstSource(itemStack), clickHandler) =>
-        registerHandler(itemStack, clickHandler)
-      case Button(_, _, _, source, clickHandler) =>
-        registerHandler(source, clickHandler)
+      case clickable: Clickable =>
+        val handler = clickable.clickHandler
+        clickable.source match {
+          case ConstSource(itemStack) =>
+            registerHandler(itemStack, handler)
+          case source =>
+            registerHandler(source, handler)
+
+        }
       case _ =>
     }
     this
@@ -55,7 +92,7 @@ class Menu(val player: Player, val name: String, val size: Int) {
 object Menu {
   type ClickHandler = Player => Any
 
-  def applyOrCreate(name: String, create: (Player, String)=> Menu)(player: Player): Menu = applyOrCreate(player,name,create(_,name))
+  def applyOrCreate(name: String, create: (Player, String) => Menu)(player: Player): Menu = applyOrCreate(player, name, create(_, name))
 
   def applyOrCreate(player: Player, name: String, create: Player => Menu): Menu = apply(name, player).getOrElse(create(player))
 

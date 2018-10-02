@@ -1,6 +1,7 @@
 package hohserg.inventorymenu.menu
 
 import hohserg.inventorymenu.menu.ListView.Area
+import hohserg.inventorymenu.menu.menuitems.{Button, Decoration}
 import hohserg.inventorymenu.notify.Observable
 import org.bukkit.block.banner.PatternType
 import org.bukkit.entity.Player
@@ -14,11 +15,7 @@ class ListView[A](player: Player, name: String, size: Int, collection: Traversab
   val source = ListedSource(collection, area.square, visualize)
   val page = source.getItem
 
-  for {
-    (x, y) <- Area(0, 0, 8, 4)
-    if !area.contains(x, y)
-  }
-    this += Decoration(x, y, borderFiller)
+  addBorder(borderFiller)
 
   for {
     (x, y) <- area

@@ -1,5 +1,6 @@
-package hohserg.inventorymenu.menu
+package hohserg.inventorymenu.menu.menuitems
 
+import hohserg.inventorymenu.menu.{DataSource, Menu}
 import hohserg.inventorymenu.notify.Notified
 import org.bukkit.inventory.ItemStack
 

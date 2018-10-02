@@ -11,7 +11,7 @@ import hohserg.inventorymenu.utils.ItemUtils._
 
 import scala.collection.mutable.ArrayBuffer
 
-class ListView[A](player: Player, name: String, size: Int, collection: TraversableOnce[A] with Observable, visualize: A => ItemStack, area: Area, borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE)) extends Menu(player, name, size) {
+class ListView[A](player: Player, name: String, size: Int, collection: TraversableOnce[A] with Observable, visualize: A => ItemStack, area: Area, borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE), buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => Decoration = Decoration.apply) extends Menu(player, name, size) {
   val source = ListedSource(collection, area.square, visualize)
   val page = source.getItem
 
@@ -20,7 +20,7 @@ class ListView[A](player: Player, name: String, size: Int, collection: Traversab
   for {
     (x, y) <- area
   }
-    this += Decoration(x, y, SelectedSource(page, x - area.x1 + (y - area.y1) * (area.x2 - area.x1 + 1), visualize))
+    this += buttonFactory(x, y, SelectedSource(page, x - area.x1 + (y - area.y1) * (area.x2 - area.x1 + 1), visualize))
 
   def getIconFor(direction: Int, color: DyeColor): ItemStack = {
     if (direction < 0)

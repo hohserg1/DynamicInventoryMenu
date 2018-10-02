@@ -1,6 +1,7 @@
 package hohserg.inventorymenu
 
 import hohserg.inventorymenu.menu.ListView.Area
+import hohserg.inventorymenu.menu.menuitems.Button
 import hohserg.inventorymenu.menu.{ListView, Menu, MenuListener}
 import hohserg.inventorymenu.notify.OpenObservable
 import org.bukkit.command.{Command, CommandSender}
@@ -20,7 +21,7 @@ object Main {
   }
 
   val map = new mutable.OpenHashMap[String, Int] with OpenObservable[String, Int]
-  for(i<-0 to 100)map+=("test"+i)->1
+  for (i <- 0 to 100) map += ("test" + i) -> 1
 
   val tupleToStack: ((String, Int)) => ItemStack = {
     case (name: String, i: Int) =>
@@ -32,9 +33,11 @@ object Main {
   }
 
   val menu2: Player => Menu = Menu.applyOrCreate("TestListView",
-    new ListView(_, _, 45, map, tupleToStack, Area(1, 1, 7, 3))
+    new ListView(_, _, 5, map, tupleToStack, Area(1, 1, 7, 3))
       .addScroll(0, 2, DyeColor.CYAN, ("Вверх", "Страница %d из %d", "Вниз"))
   )
+  val test: (Player, String) => Menu = ???
+  val test2: Player => String => Menu =test.curried.andThen(f=>f.apply(_)+=Button(0,0,tupleToStack(???),???))
   var i = 0
 
   def onCommand(sender: CommandSender, command: Command, label: String, args: Array[String]): Boolean = {

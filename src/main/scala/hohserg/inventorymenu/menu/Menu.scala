@@ -92,7 +92,7 @@ class Menu(val player: Player, val name: String, val height: Int) {
 object Menu {
   type ClickHandler = Player => Any
 
-  def applyOrCreate(name: String, create: (Player, String) => Menu)(player: Player): Menu = applyOrCreate(player, name, create(_, name))
+  def applyOrCreate(name: String, create: (Player, String) => Menu): Player=>Menu = applyOrCreate(_, name, create(_, name))
 
   def applyOrCreate(player: Player, name: String, create: Player => Menu): Menu = apply(name, player).getOrElse(create(player))
 

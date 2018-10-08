@@ -32,7 +32,7 @@ object Main {
       r
   }
 
-  val menu2: Player => Menu = Menu.applyOrCreate("TestListView",
+  val menu2 = Menu.applyOrCreate("TestListView",
     new ListView(_, _, 5, map, tupleToStack, Area(1, 1, 7, 3))
       .addScroll(0, 2, DyeColor.CYAN, ("Вверх", "Страница %d из %d", "Вниз"))
   )

@@ -36,8 +36,6 @@ object Main {
     new ListView(_, _, 5, map, tupleToStack, Area(1, 1, 7, 3))
       .addScroll(0, 2, DyeColor.CYAN, ("Вверх", "Страница %d из %d", "Вниз"))
   )
-  val test: (Player, String) => Menu = ???
-  val test2: Player => String => Menu =test.curried.andThen(f=>f.apply(_)+=Button(0,0,tupleToStack(???),???))
   var i = 0
 
   def onCommand(sender: CommandSender, command: Command, label: String, args: Array[String]): Boolean = {

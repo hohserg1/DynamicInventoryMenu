@@ -4,7 +4,7 @@ import hohserg.inventorymenu.menu.Menu.ClickHandler
 import hohserg.inventorymenu.menu._
 import org.bukkit.inventory.ItemStack
 
-private[menu] case class Button(menu: Menu, x: Int, y: Int, source: DataSource[ItemStack], clickHandler: ClickHandler) extends Clickable
+case class Button(menu: Menu, x: Int, y: Int, source: DataSource[ItemStack], clickHandler: ClickHandler) extends Clickable
 
 object Button {
   def apply(x: Int, y: Int, source: DataSource[ItemStack], clickHandler: ClickHandler): Menu => MenuItem = new Button(_, x, y, source, clickHandler)

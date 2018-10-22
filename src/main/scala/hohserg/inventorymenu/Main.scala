@@ -1,5 +1,6 @@
 package hohserg.inventorymenu
 
+import java.util.concurrent.atomic.AtomicInteger
 import hohserg.inventorymenu.menu.ListView.Area
 import hohserg.inventorymenu.menu.menuitems.Button
 import hohserg.inventorymenu.menu.{ListView, Menu, MenuListener}

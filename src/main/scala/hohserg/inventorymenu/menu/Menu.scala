@@ -92,11 +92,11 @@ class Menu(val player: Player, val name: String, val height: Int) {
 object Menu {
   type ClickHandler = Player => Any
 
-  def applyOrCreate(name: String, create: (Player, String) => Menu): Player=>Menu = applyOrCreate(_, name, create(_, name))
+  def applyOrCreate[A<:Menu](name: String, create: (Player, String) => A): Player=>A = applyOrCreate(_, name, create(_, name))
 
-  def applyOrCreate(player: Player, name: String, create: Player => Menu): Menu = apply(name, player).getOrElse(create(player))
+  def applyOrCreate[A<:Menu](player: Player, name: String, create: Player => A): A = apply(name, player).getOrElse(create(player))
 
-  def apply(name: String, player: Player): Option[Menu] = map.get((name, player))
+  def apply[A<:Menu](name: String, player: Player): Option[A] = map.get((name, player)).asInstanceOf[Option[A]]
 
   val map = new mutable.OpenHashMap[(String, Player), Menu]
 

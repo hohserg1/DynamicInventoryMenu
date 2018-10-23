@@ -11,7 +11,13 @@ import hohserg.inventorymenu.utils.ItemUtils._
 
 import scala.collection.mutable.ArrayBuffer
 
-class ListView[A](player: Player, name: String, height: Int, collection: TraversableOnce[A] with Observable, visualize: A => ItemStack, area: Area, borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE), buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => Decoration = Decoration.apply) extends Menu(player, name, height) {
+class ListView[A](player: Player, name: String,
+                  height: Int,
+                  collection: TraversableOnce[A] with Observable,
+                  visualize: A => ItemStack,
+                  area: Area,
+                  borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE),
+                  buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => Decoration = Decoration.apply) extends Menu(player, name, height) {
   val source = ListedSource(collection, area.square, visualize)
   val page = source.getItem
 
@@ -68,6 +74,15 @@ object ListView {
         x <- x1 to x2
         y <- y1 to y2
       } yield (x, y)).iterator
+  }
+
+  //java_support
+  def apply[A](height: Int,
+               collection: TraversableOnce[A] with Observable, visualize: A => ItemStack,
+               area: Area,
+               borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE),
+               buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => Decoration = Decoration.apply): (Player, String) => ListView[A] = {
+    new ListView[A](_, _, height, collection, visualize, area, borderFiller, buttonFactory)
   }
 
 }

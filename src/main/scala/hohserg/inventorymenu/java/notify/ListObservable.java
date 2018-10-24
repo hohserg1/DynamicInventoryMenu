@@ -11,6 +11,7 @@ public class ListObservable<A> extends CollectionObservable<A> implements List<A
         super(list);
         this.list = list;
     }
+
     @Override
     public boolean addAll(int index, Collection<? extends A> c) {
         canNotify_$eq(false);
@@ -53,7 +54,8 @@ public class ListObservable<A> extends CollectionObservable<A> implements List<A
     @Override
     public A remove(int index) {
         A remove = list.remove(index);
-        notifyAllObjects();
+        if (remove != null)
+            notifyAllObjects();
 
         return remove;
     }

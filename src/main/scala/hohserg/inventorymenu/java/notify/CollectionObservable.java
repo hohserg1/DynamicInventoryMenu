@@ -4,7 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.function.Predicate;
 
-public class CollectionObservable<A>  extends JavaObservable implements Collection<A> {
+public class CollectionObservable<A> extends JavaObservable implements Collection<A> {
     private Collection<A> collection;
 
     public CollectionObservable(Collection<A> collection) {
@@ -44,14 +44,16 @@ public class CollectionObservable<A>  extends JavaObservable implements Collecti
     @Override
     public boolean add(A a) {
         boolean add = collection.add(a);
-        notifyAllObjects();
+        if (add)
+            notifyAllObjects();
         return add;
     }
 
     @Override
     public boolean remove(Object o) {
         boolean remove = collection.remove(o);
-        notifyAllObjects();
+        if (remove)
+            notifyAllObjects();
         return remove;
     }
 
@@ -74,7 +76,8 @@ public class CollectionObservable<A>  extends JavaObservable implements Collecti
         canNotify_$eq(false);
         boolean b = collection.removeAll(c);
         canNotify_$eq(true);
-        notifyAllObjects();
+        if (b)
+            notifyAllObjects();
 
         return b;
     }
@@ -84,7 +87,8 @@ public class CollectionObservable<A>  extends JavaObservable implements Collecti
         canNotify_$eq(false);
         boolean b = collection.retainAll(c);
         canNotify_$eq(true);
-        notifyAllObjects();
+        if (b)
+            notifyAllObjects();
 
         return b;
     }
@@ -94,7 +98,8 @@ public class CollectionObservable<A>  extends JavaObservable implements Collecti
         canNotify_$eq(false);
         boolean b = collection.removeIf(filter);
         canNotify_$eq(true);
-        notifyAllObjects();
+        if (b)
+            notifyAllObjects();
 
         return b;
     }

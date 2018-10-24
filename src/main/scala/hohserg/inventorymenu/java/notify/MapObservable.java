@@ -47,7 +47,8 @@ public class MapObservable<K, V> extends JavaObservable implements Map<K, V> {
     @Override
     public V remove(Object key) {
         V remove = map.remove(key);
-        notifyAllObjects();
+        if(remove!=null)
+            notifyAllObjects();
         return remove;
     }
 

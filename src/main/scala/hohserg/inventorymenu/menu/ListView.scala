@@ -3,11 +3,11 @@ package hohserg.inventorymenu.menu
 import hohserg.inventorymenu.menu.ListView.Area
 import hohserg.inventorymenu.menu.menuitems.{Button, Decoration}
 import hohserg.inventorymenu.notify.Observable
+import hohserg.inventorymenu.utils.ItemUtils._
 import org.bukkit.block.banner.PatternType
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.{DyeColor, Material}
-import hohserg.inventorymenu.utils.ItemUtils._
 
 import scala.collection.mutable.ArrayBuffer
 
@@ -18,6 +18,7 @@ class ListView[A](player: Player, name: String,
                   area: Area,
                   borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE),
                   buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => Decoration = Decoration.apply) extends Menu(player, name, height) {
+
   val source = ListedSource(collection, area.square, visualize)
   val page = source.getItem
 

@@ -17,10 +17,11 @@ import org.bukkit.inventory.meta.SkullMeta
 import scala.collection.mutable
 
 object Examples {
+  val worldTime = new AtomicInteger with Observable
+
   def onEnable(): Unit = {
     Bukkit.getScheduler.scheduleSyncRepeatingTask(plugin, new Runnable {
       override def run(): Unit = {
-        import hohserg.inventorymenu.example.Examples._
         if (Bukkit.getWorld("world").getTime.toInt % 750 == 0) {
           worldTime.set(Bukkit.getWorld("world").getTime.toInt)
           worldTime.notifyAllObjects()
@@ -28,9 +29,6 @@ object Examples {
       }
     }, 10, 1)
   }
-
-
-  val worldTime = new AtomicInteger with Observable
 
   val map = new mutable.OpenHashMap[String, Int] with OpenObservable[String, Int]
   for (i <- 0 to 100) map += ("test" + i) -> 1
@@ -70,7 +68,7 @@ object Examples {
   val menu1 = Menu.applyOrCreate("My marks",
     new ListView[(Location, Date)](_, _, 5,
       marks,
-      { case (loc, date) => lorize(new ItemStack(Material.EMERALD), "" + loc.getBlockX + " " + loc.getBlockY + " " + loc.getBlockZ + " " + df.format(date)) },
+      { case (loc: Location, date: Date) => lorize(new ItemStack(Material.EMERALD), "" + loc.getBlockX + " " + loc.getBlockY + " " + loc.getBlockZ + " " + df.format(date)) },
       Area(1, 1, 7, 3))
       .addScroll(0, 2, DyeColor.RED, ("Вверх", "Страница %d/%d", "Вниз"))
       += Button(8, 2, lorize(new ItemStack(Material.NETHER_STAR), "Добавить метку"), (player: Player) => marks += player.getLocation -> new Date())

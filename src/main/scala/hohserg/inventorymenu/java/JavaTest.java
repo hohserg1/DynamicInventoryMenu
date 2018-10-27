@@ -13,6 +13,7 @@ public class JavaTest {
                 return null;
             }
     )));
+    //Function1<Player, Menu> menu2=Menu.applyOrCreate("Test",ListView.apply(5));
 
     public JavaTest() {
         //menu1.apply().open();

@@ -1,5 +1,7 @@
 package hohserg.inventorymenu.menu
 
+import java.util
+
 import hohserg.inventorymenu.menu.ListView.Area
 import hohserg.inventorymenu.menu.Menu.ClickHandler
 import hohserg.inventorymenu.menu.menuitems._
@@ -7,7 +9,7 @@ import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-import scala.collection.mutable
+import scala.collection.{Iterable, mutable}
 
 class Menu(val player: Player, val name: String, val height: Int) {
   val width = 9
@@ -17,7 +19,7 @@ class Menu(val player: Player, val name: String, val height: Int) {
   private[menu] val inv = Bukkit.createInventory(null, size, name)
   val items = new Array[Array[MenuItem]](9).map(_ => new Array[MenuItem](height))
 
-  def ++=(button: Seq[Menu => MenuItem]): this.type = {
+  def ++=(button: Iterable[Menu => MenuItem]): this.type = {
     button.foreach(+=)
     this
   }
@@ -40,7 +42,7 @@ class Menu(val player: Player, val name: String, val height: Int) {
           case ConstSource(itemStack) =>
             clickHandlersMap -= itemStack
           case source =>
-            clickHandlersList.remove(clickHandlersList.indexOf((source,handler)))
+            clickHandlersList.remove(clickHandlersList.indexOf((source, handler(_, clickable))))
         }
       case _ =>
     }
@@ -58,9 +60,9 @@ class Menu(val player: Player, val name: String, val height: Int) {
         val handler = clickable.clickHandler
         clickable.source match {
           case ConstSource(itemStack) =>
-            registerHandler(itemStack, handler)
+            registerHandler(itemStack, handler, clickable)
           case source =>
-            registerHandler(source, handler)
+            registerHandler(source, handler, clickable)
 
         }
       case _ =>
@@ -76,18 +78,21 @@ class Menu(val player: Player, val name: String, val height: Int) {
     clickHandlersMap.get(clicked).orElse(clickHandlersList.find(_._1.getItem == clicked).map(_._2)).foreach(_ (player))
   }
 
-  private val clickHandlersList = new mutable.ListBuffer[(DataSource[ItemStack], ClickHandler)]()
+  private val clickHandlersList = new mutable.ListBuffer[(DataSource[ItemStack], Player => Any)]()
 
-  private val clickHandlersMap = new mutable.OpenHashMap[ItemStack, ClickHandler]()
+  private val clickHandlersMap = new mutable.OpenHashMap[ItemStack, Player => Any]()
+
+  def registerHandler(item: DataSource[ItemStack], clickHandler: ClickHandler, menuItem: Clickable): Unit =
+    clickHandlersList += item -> (clickHandler(_, menuItem))
+
+  def registerHandler(item: ItemStack, clickHandler: ClickHandler, menuItem: Clickable): Unit =
+    clickHandlersMap += item -> (clickHandler(_, menuItem))
+
   //java-support
   def add(button: Menu => MenuItem): Menu = this += button
 
-  def registerHandler(item: DataSource[ItemStack], clickHandler: ClickHandler): Unit =
-    clickHandlersList += item -> clickHandler
   import collection.JavaConverters._
 
-  def registerHandler(item: ItemStack, clickHandler: ClickHandler): Unit =
-    clickHandlersMap += item -> clickHandler
   def addAll(button: util.Collection[Menu => MenuItem]): Menu = this ++= button.asScala
   
   def addAll(button: Array[Menu => MenuItem]): Menu = this ++= button
@@ -96,13 +101,13 @@ class Menu(val player: Player, val name: String, val height: Int) {
 }
 
 object Menu {
-  type ClickHandler = Player => Any
+  type ClickHandler = (Player, Clickable) => Any
 
-  def applyOrCreate[A<:Menu](name: String, create: (Player, String) => A): Player=>A = applyOrCreate(_, name, create(_, name))
+  def applyOrCreate[A <: Menu](name: String, create: (Player, String) => A): Player => A = applyOrCreate(_, name, create(_, name))
 
-  def applyOrCreate[A<:Menu](player: Player, name: String, create: Player => A): A = apply(name, player).getOrElse(create(player))
+  def applyOrCreate[A <: Menu](player: Player, name: String, create: Player => A): A = apply(name, player).getOrElse(create(player))
 
-  def apply[A<:Menu](name: String, player: Player): Option[A] = map.get((name, player)).asInstanceOf[Option[A]]
+  def apply[A <: Menu](name: String, player: Player): Option[A] = map.get((name, player)).asInstanceOf[Option[A]]
 
   val map = new mutable.OpenHashMap[(String, Player), Menu]
 

@@ -79,12 +79,18 @@ class Menu(val player: Player, val name: String, val height: Int) {
   private val clickHandlersList = new mutable.ListBuffer[(DataSource[ItemStack], ClickHandler)]()
 
   private val clickHandlersMap = new mutable.OpenHashMap[ItemStack, ClickHandler]()
+  //java-support
+  def add(button: Menu => MenuItem): Menu = this += button
 
   def registerHandler(item: DataSource[ItemStack], clickHandler: ClickHandler): Unit =
     clickHandlersList += item -> clickHandler
+  import collection.JavaConverters._
 
   def registerHandler(item: ItemStack, clickHandler: ClickHandler): Unit =
     clickHandlersMap += item -> clickHandler
+  def addAll(button: util.Collection[Menu => MenuItem]): Menu = this ++= button.asScala
+  
+  def addAll(button: Array[Menu => MenuItem]): Menu = this ++= button
 
 
 }

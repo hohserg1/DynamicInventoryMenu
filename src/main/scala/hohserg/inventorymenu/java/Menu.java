@@ -17,16 +17,8 @@ public class Menu extends hohserg.inventorymenu.menu.Menu {
     public static Function2<Player, String, Menu> apply(int height, Function1<hohserg.inventorymenu.menu.Menu, MenuItem>... menuItems) {
         return (player, title) -> {
             Menu r = new Menu(player, title, height);
-            r.$plus$plus$eq(JavaConverters.asScalaBuffer(Arrays.asList(menuItems)).toSeq());
+            r.addAll(menuItems);
             return r;
         };
-    }
-
-    public hohserg.inventorymenu.menu.Menu add(Function1<hohserg.inventorymenu.menu.Menu, MenuItem> button) {
-        return super.$plus$eq(button);
-    }
-
-    public hohserg.inventorymenu.menu.Menu addAll(Seq<Function1<hohserg.inventorymenu.menu.Menu, MenuItem>> button) {
-        return super.$plus$plus$eq(button);
     }
 }

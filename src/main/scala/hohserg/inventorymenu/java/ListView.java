@@ -12,11 +12,7 @@ import scala.Function1;
 import scala.Function2;
 import scala.Function3;
 import scala.Tuple2;
-import scala.collection.JavaConverters;
-import scala.collection.Seq;
 import scala.collection.TraversableOnce;
-
-import java.util.Arrays;
 
 public class ListView<A> extends hohserg.inventorymenu.menu.ListView {
     public ListView(Player player, String name, int height,
@@ -58,7 +54,7 @@ public class ListView<A> extends hohserg.inventorymenu.menu.ListView {
                     area,
                     borderFiller,
                     buttonFactory);
-            r.$plus$plus$eq(JavaConverters.asScalaBuffer(Arrays.asList(menuItems)).toSeq());
+            r.addAll(menuItems);
             return r;
         };
     }
@@ -76,16 +72,8 @@ public class ListView<A> extends hohserg.inventorymenu.menu.ListView {
                     area,
                     borderFiller,
                     buttonFactory);
-            r.$plus$plus$eq(JavaConverters.asScalaBuffer(Arrays.asList(menuItems)).toSeq());
+            r.addAll(menuItems);
             return r;
         };
-    }
-
-    public Menu add(Function1<Menu, MenuItem> button) {
-        return super.$plus$eq(button);
-    }
-
-    public Menu addAll(Seq<Function1<Menu, MenuItem>> button) {
-        return super.$plus$plus$eq(button);
     }
 }

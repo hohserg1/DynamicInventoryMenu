@@ -3,7 +3,7 @@ package hohserg.inventorymenu.menu
 import java.util
 
 import hohserg.inventorymenu.menu.ListView.Area
-import hohserg.inventorymenu.menu.Menu.ClickHandler
+import hohserg.inventorymenu.menu.menuitems.Clickable.ClickHandler
 import hohserg.inventorymenu.menu.menuitems._
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -94,14 +94,13 @@ class Menu(val player: Player, val name: String, val height: Int) {
   import collection.JavaConverters._
 
   def addAll(button: util.Collection[Menu => MenuItem]): Menu = this ++= button.asScala
-  
+
   def addAll(button: Array[Menu => MenuItem]): Menu = this ++= button
 
 
 }
 
 object Menu {
-  type ClickHandler = (Player, Clickable) => Any
 
   def applyOrCreate[A <: Menu](name: String, create: (Player, String) => A): Player => A = applyOrCreate(_, name, create(_, name))
 

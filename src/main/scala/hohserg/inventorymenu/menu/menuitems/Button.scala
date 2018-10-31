@@ -1,6 +1,6 @@
 package hohserg.inventorymenu.menu.menuitems
 
-import hohserg.inventorymenu.menu.Menu.ClickHandler
+import Clickable.ClickHandler
 import hohserg.inventorymenu.menu._
 import org.bukkit.inventory.ItemStack
 

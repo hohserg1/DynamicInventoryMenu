@@ -1,7 +1,7 @@
 package hohserg.inventorymenu.menu
 
 import hohserg.inventorymenu.menu.ListView.Area
-import hohserg.inventorymenu.menu.menuitems.{Button, Decoration}
+import hohserg.inventorymenu.menu.menuitems.{Button, Clickable, Decoration}
 import hohserg.inventorymenu.notify.Observable
 import hohserg.inventorymenu.utils.ItemUtils._
 import org.bukkit.block.banner.PatternType
@@ -41,8 +41,8 @@ class ListView[A](player: Player, name: String,
       .addPageIndicator(x, y, color, text._2)
       .addScrollButton(1, x, y + 1, color, text._3)
 
-  private def listingPage(direction: Int): Player => Unit =
-    (_: Player) => {
+  private def listingPage(direction: Int): (Player, Clickable) => Unit =
+    (_, _) => {
       val newPage = source.page + direction
       if (newPage >= 0 && newPage < source.pageCount)
         source.page = newPage

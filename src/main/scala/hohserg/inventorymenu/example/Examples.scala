@@ -71,7 +71,7 @@ object Examples {
       { case (loc: Location, date: Date) => lorize(new ItemStack(Material.EMERALD), "" + loc.getBlockX + " " + loc.getBlockY + " " + loc.getBlockZ + " " + df.format(date)) },
       Area(1, 1, 7, 3))
       .addScroll(0, 2, DyeColor.RED, ("Вверх", "Страница %d/%d", "Вниз"))
-      += Button(8, 2, lorize(new ItemStack(Material.NETHER_STAR), "Добавить метку"), (player: Player) => marks += player.getLocation -> new Date())
+      += Button(8, 2, lorize(new ItemStack(Material.NETHER_STAR), "Добавить метку"), (player: Player,_) => marks += player.getLocation -> new Date())
   )
 
   val menu2 = Menu.applyOrCreate("TestListView",

@@ -42,7 +42,7 @@ class Menu(val player: Player, val name: String, val height: Int) {
           case ConstSource(itemStack) =>
             clickHandlersMap -= itemStack
           case source =>
-            clickHandlersList.remove(clickHandlersList.indexOf((source, handler(_, clickable))))
+            clickHandlersList.remove(clickHandlersList.indexOf((source, handler(_: Player, clickable))))
         }
       case _ =>
     }

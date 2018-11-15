@@ -18,7 +18,7 @@ case class CheckBox(menu: Menu, x: Int, y: Int, on: DataSource[ItemStack], off: 
 
   def switchState(): Any = state = !state
 
-  val clickHandler = _ => switchState()
+  val clickHandler = (_,_) => switchState()
 
   override val source: DataSource[ItemStack] = VariableSource[Object](observable,_=>if(state)on.getItem else off.getItem)
   source.addNotified(this)

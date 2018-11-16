@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack
 
 import scala.collection.mutable.ArrayBuffer
 
-trait DataSource[A] extends Observable with Pipe {
+trait DataSource[A] extends Pipe {
   def getItem: A
 }
 

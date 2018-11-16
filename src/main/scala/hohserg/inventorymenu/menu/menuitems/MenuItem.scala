@@ -1,10 +1,10 @@
 package hohserg.inventorymenu.menu.menuitems
 
 import hohserg.inventorymenu.menu.{DataSource, Menu}
-import hohserg.inventorymenu.notify.Notified
+import hohserg.inventorymenu.notify.AbleNotify
 import org.bukkit.inventory.ItemStack
 
-trait MenuItem extends Notified {
+trait MenuItem extends AbleNotify {
   def menu: Menu
   def x: Int
   def y: Int
@@ -16,5 +16,5 @@ trait MenuItem extends Notified {
     menu.inv.setItem(x + y * 9, source.getItem)
 
 
-  def onUpdate(): Unit = setInventoryContents()
+  def onNotified(): Unit = setInventoryContents()
 }

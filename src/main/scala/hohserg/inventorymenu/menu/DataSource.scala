@@ -54,8 +54,8 @@ case class ListedSource[A](collection: TraversableOnce[A] with Observable, pageS
 
   collection.addNotified(this)
 
-  override def onUpdate(): Unit = {
-    super.onUpdate()
+  override def onNotified(): Unit = {
+    super.onNotified()
     updatedPageContent()
   }
 }

@@ -1,7 +1,7 @@
 package hohserg.inventorymenu.java
 
 import hohserg.inventorymenu.java.notify.{MapObservable, CollectionObservable => JavaCollectionObservable}
-import hohserg.inventorymenu.notify.{Notified, Observable}
+import hohserg.inventorymenu.notify.{AbleNotify, Observable}
 
 import scala.collection.{Iterator, Traversable}
 import collection.JavaConverters._
@@ -18,7 +18,7 @@ object CollectionWithTraitConversions {
   case class JMapWrapper[K, V](underlying: MapObservable[K, V]) extends TraversableOnce[(K, V)] with Observable {
     override def size: Int = underlying.size()
 
-    override def addNotified(e: Notified): Unit = underlying.addNotified(e)
+    override def addNotified(e: AbleNotify): Unit = underlying.addNotified(e)
 
     override def notifyAllObjects(): Unit = underlying.notifyAllObjects()
 
@@ -51,7 +51,7 @@ object CollectionWithTraitConversions {
   case class JTraversableOnceWrapper[A](underlying: JavaCollectionObservable[A]) extends TraversableOnce[A] with Observable {
     override def size: Int = underlying.size()
 
-    override def addNotified(e: Notified): Unit = underlying.addNotified(e)
+    override def addNotified(e: AbleNotify): Unit = underlying.addNotified(e)
 
     override def notifyAllObjects(): Unit = underlying.notifyAllObjects()
 

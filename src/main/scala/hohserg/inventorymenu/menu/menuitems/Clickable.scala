@@ -9,5 +9,8 @@ trait Clickable extends MenuItem {
 }
 
 object Clickable {
+  /**
+    * return value always ignored
+    */
   type ClickHandler = (Player, Clickable) => Any
 }

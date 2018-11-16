@@ -50,15 +50,15 @@ public class PluginPreloader extends JavaPlugin {
             }
         }
 
-        for (File file: librariesFiles) {
+        for (File file : librariesFiles) {
             try {
                 addToClasspath(file.toURI().toURL());
             } catch (MalformedURLException e) {
                 throw new RuntimeException(e);
             }
         }
-        instance=this;
-        
+        instance = this;
+
         Main.onEnable();
     }
 
@@ -88,7 +88,7 @@ public class PluginPreloader extends JavaPlugin {
 
     @Override
     public void onDisable() {
-            Main.onDisable();
+        Main.onDisable();
     }
 
     private boolean loadLibrary(String url, File libraryFile) {

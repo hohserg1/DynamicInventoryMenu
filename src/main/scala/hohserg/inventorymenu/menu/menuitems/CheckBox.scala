@@ -9,7 +9,7 @@ case class CheckBox(menu: Menu, x: Int, y: Int, on: DataSource[ItemStack], off: 
 
   private val observable = new Object with Observable
 
-  private def state: Boolean = _state
+  def state: Boolean = _state
 
   private def state_=(value: Boolean): Unit = {
     _state = value

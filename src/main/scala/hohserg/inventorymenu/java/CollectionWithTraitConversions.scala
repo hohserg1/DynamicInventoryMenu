@@ -10,11 +10,12 @@ object CollectionWithTraitConversions {
   def convert[A](jc: JavaCollectionObservable[A]): TraversableOnce[A] with Observable = {
     JTraversableOnceWrapper(jc)
   }
-  def convert[K,V](jc: MapObservable[K, V]): TraversableOnce[(K,V)] with Observable = {
+
+  def convert[K, V](jc: MapObservable[K, V]): TraversableOnce[(K, V)] with Observable = {
     JMapWrapper(jc)
   }
 
-  case class JMapWrapper[K,V](underlying: MapObservable[K, V]) extends TraversableOnce[(K,V)] with Observable {
+  case class JMapWrapper[K, V](underlying: MapObservable[K, V]) extends TraversableOnce[(K, V)] with Observable {
     override def size: Int = underlying.size()
 
     override def addNotified(e: Notified): Unit = underlying.addNotified(e)

@@ -43,7 +43,8 @@ public class ListIteratorObservable<A> extends JavaObservable implements ListIte
     @Override
     public void remove() {
         iterator.remove();
-        notifyAllObjects();    }
+        notifyAllObjects();
+    }
 
     @Override
     public void set(A a) {

@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack
 case class CheckBox(menu: Menu, x: Int, y: Int, on: DataSource[ItemStack], off: DataSource[ItemStack], defaultState: Boolean = true) extends Clickable {
   private[this] var _state: Boolean = defaultState
 
-  private val observable=new Object with Observable
+  private val observable = new Object with Observable
 
   private def state: Boolean = _state
 
@@ -18,8 +18,8 @@ case class CheckBox(menu: Menu, x: Int, y: Int, on: DataSource[ItemStack], off: 
 
   def switchState(): Any = state = !state
 
-  val clickHandler = (_,_) => switchState()
+  val clickHandler = (_, _) => switchState()
 
-  override val source: DataSource[ItemStack] = VariableSource[Object](observable,_=>if(state)on.getItem else off.getItem)
+  override val source: DataSource[ItemStack] = VariableSource[Object](observable, _ => if (state) on.getItem else off.getItem)
   source.addNotified(this)
 }

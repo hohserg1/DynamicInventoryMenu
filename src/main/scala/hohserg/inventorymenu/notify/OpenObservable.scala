@@ -5,11 +5,12 @@ import scala.collection.mutable
 trait OpenObservable[A, B] extends mutable.OpenHashMap[A, B] with Observable {
   override def ++=(xs: TraversableOnce[(A, B)]): OpenObservable.this.type = {
     canNotify = false
-    val r=super.++=(xs)
+    val r = super.++=(xs)
     canNotify = true
     notifyAllObjects()
     r
   }
+
   override def --=(xs: TraversableOnce[A]): OpenObservable.this.type = {
     canNotify = false
     val r = super.--=(xs)

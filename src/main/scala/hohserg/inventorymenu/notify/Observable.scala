@@ -13,9 +13,9 @@ trait Observable {
 
   @transient protected var canNotify = true
 
-  def notifyAllObjects(): Unit = if (canNotify) notifiedObjects.foreach{n=>
-    val o=n.get
+  def notifyAllObjects(): Unit = if (canNotify) notifiedObjects.foreach { n =>
+    val o = n.get
     o.foreach(_.onUpdate())
-    if(o.isEmpty)notifiedObjects-=n
+    if (o.isEmpty) notifiedObjects -= n
   }
 }

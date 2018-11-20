@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicInteger
 import hohserg.inventorymenu.Main.plugin
 import hohserg.inventorymenu.menu.ListView.Area
 import hohserg.inventorymenu.menu.{DataSource, ListView, Menu, VariableSource}
-import hohserg.inventorymenu.menu.menuitems.{Button, Decoration}
+import hohserg.inventorymenu.menu.menuitems.{Button, Clickable, Decoration}
 import hohserg.inventorymenu.notify.{CollectionObservable, Observable, OpenObservable}
 import org.bukkit.{Bukkit, DyeColor, Location, Material}
 import org.bukkit.entity.Player
@@ -71,7 +71,7 @@ object Examples {
       { case (loc: Location, date: Date) => lorize(new ItemStack(Material.EMERALD), "" + loc.getBlockX + " " + loc.getBlockY + " " + loc.getBlockZ + " " + df.format(date)) },
       Area(1, 1, 7, 3))
       .addScroll(0, 2, DyeColor.RED, ("Вверх", "Страница %d/%d", "Вниз"))
-      += Button(8, 2, lorize(new ItemStack(Material.NETHER_STAR), "Добавить метку"), (player: Player,_) => marks += player.getLocation -> new Date())
+      += Button(8, 2, lorize(new ItemStack(Material.NETHER_STAR), "Добавить метку"), (player: Player, _: Clickable) => marks += player.getLocation -> new Date())
   )
 
   val menu2 = Menu.applyOrCreate("TestListView",

@@ -2,6 +2,7 @@ package hohserg.inventorymenu.menu
 
 import java.util
 
+import hohserg.inventorymenu.java.MenuFactory
 import hohserg.inventorymenu.menu.ListView.Area
 import hohserg.inventorymenu.menu.menuitems.Clickable.ClickHandler
 import hohserg.inventorymenu.menu.menuitems._
@@ -102,7 +103,7 @@ class Menu(val player: Player, val name: String, val height: Int) {
 
 object Menu {
 
-  def applyOrCreate[A <: Menu](name: String, create: (Player, String) => A): Player => A = applyOrCreate(_, name, create(_, name))
+  def applyOrCreate[A <: Menu](name: String, create: (Player, String) => A): MenuFactory[A] = applyOrCreate(_, name, create(_, name))
 
   def applyOrCreate[A <: Menu](player: Player, name: String, create: Player => A): A = apply(name, player).getOrElse(create(player))
 

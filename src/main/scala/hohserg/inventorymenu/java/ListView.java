@@ -20,7 +20,7 @@ public class ListView<A> extends hohserg.inventorymenu.menu.ListView {
                     Function1<A, ItemStack> visualize,
                     Area area,
                     ItemStack borderFiller,
-                    Function3<Object, Object, DataSource<ItemStack>, Function1<Menu, Decoration>> buttonFactory) {
+                    Function3<Integer, Integer, DataSource<ItemStack>, Function1<Menu, Decoration>> buttonFactory) {
         super(player, name, height, toScala(collection), visualize, area, borderFiller, buttonFactory);
     }
 
@@ -29,7 +29,7 @@ public class ListView<A> extends hohserg.inventorymenu.menu.ListView {
                            Function1<A, ItemStack> visualize,
                            Area area,
                            ItemStack borderFiller,
-                           Function3<Object, Object, DataSource<ItemStack>, Function1<Menu, Decoration>> buttonFactory) {
+                           Function3<Integer, Integer, DataSource<ItemStack>, Function1<Menu, Decoration>> buttonFactory) {
         super(player, name, height, toScala(collection), visualize, area, borderFiller, buttonFactory);
     }
 
@@ -46,7 +46,7 @@ public class ListView<A> extends hohserg.inventorymenu.menu.ListView {
                                                                 Function1<A, ItemStack> visualize,
                                                                 Area area,
                                                                 ItemStack borderFiller,
-                                                                Function3<Object, Object, DataSource<ItemStack>, Function1<Menu, Decoration>> buttonFactory,
+                                                                Function3<Integer, Integer, DataSource<ItemStack>, Function1<Menu, Decoration>> buttonFactory,
                                                                 Function1<hohserg.inventorymenu.menu.Menu, MenuItem>... menuItems) {
         return (Player player, String title) -> {
             ListView<A> r = new ListView<>(player, title, height, collection,

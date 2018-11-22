@@ -16,8 +16,9 @@ class Menu(val player: Player, val name: String, val height: Int) {
   val width = 9
   val size: Int = height * width
 
-  Menu.register(this, player)
-  private[menu] val inv = Bukkit.createInventory(null, size, name)
+  private[menu] val holder = new MenuHolder(this)
+
+  private[menu] val inv = Bukkit.createInventory(holder, size, name)
   val items = new Array[Array[MenuItem]](9).map(_ => new Array[MenuItem](height))
 
   def ++=(button: Iterable[Menu => MenuItem]): this.type = {
@@ -103,16 +104,17 @@ class Menu(val player: Player, val name: String, val height: Int) {
 
 object Menu {
 
-  def applyOrCreate[A <: Menu](name: String, create: (Player, String) => A): MenuFactory[A] = applyOrCreate(_, name, create(_, name))
+  def applyOrCreate[A <: Menu](id: String, create: Player => A): MenuFactory[A] = applyOrCreate(_, id, create(_))
 
-  def applyOrCreate[A <: Menu](player: Player, name: String, create: Player => A): A = apply(name, player).getOrElse(create(player))
+  def applyOrCreate[A <: Menu](player: Player, id: String, create: Player => A): A = apply(id, player).getOrElse(register(create(player), player))
 
-  def apply[A <: Menu](name: String, player: Player): Option[A] = map.get((name, player)).asInstanceOf[Option[A]]
+  def apply[A <: Menu](id: String, player: Player): Option[A] = map.get((id, player)).asInstanceOf[Option[A]]
 
   val map = new mutable.OpenHashMap[(String, Player), Menu]
 
-  def register(menu: Menu, player: Player): Unit = {
-    map += (menu.name, player) -> menu
+  private def register[A <: Menu](menu: A, player: Player): A = {
+    map += (menu.holder.id, player) -> menu
+    menu
   }
 
 }

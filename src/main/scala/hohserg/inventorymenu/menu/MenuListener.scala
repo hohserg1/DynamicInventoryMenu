@@ -10,12 +10,12 @@ class MenuListener extends Listener {
     val player = e.getWhoClicked.asInstanceOf[Player]
     val clicked = e.getCurrentItem
     val inventory = e.getInventory
-    Option(inventory.getHolder).collect{case mh:MenuHolder=>mh}.map(_.id).foreach {
-      id=>
-      Menu[Menu](id, player).foreach { menu =>
-        e.setCancelled(true)
-        menu.onClick(player, clicked)
-      }
+    Option(inventory.getHolder).collect { case mh: MenuHolder => mh }.map(_.id).foreach {
+      id =>
+        Menu[Menu](id, player).foreach { menu =>
+          e.setCancelled(true)
+          menu.onClick(player, clicked)
+        }
     }
   }
 }

@@ -10,13 +10,13 @@ Powerful api for create dynamically updated bukkit ui
 - create menu fabric(partial function)
 
 ```Scala
-val menu: Player => Menu = Menu.applyOrCreate("Title",new Menu(_, _, size=45))
+val menu: Player => Menu = Menu.applyOrCreate(new Menu(_, "Title", size=45))
 ```
 
 - add buttons and decorations
 
 ```Scala
-val menu: Player => Menu = Menu.applyOrCreate("Title",new Menu(_, _, size=45)
+val menu: Player => Menu = Menu.applyOrCreate(new Menu(_, "Title", size=45)
   .addDecoration(new ItemStack(Material.APPLE), 1, 1))
   ```
   

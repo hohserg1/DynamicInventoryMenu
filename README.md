@@ -30,8 +30,10 @@ menu(player).open()
 - [x] Basic architecture
 - [x] List view for OpenHashMap
 - [x] List view for any collection
-- [ ] Java syntax and collection support
-- [ ] Some stuffs
+- [x] Java syntax and collection support
+- [ ] Component abstract level
+- [ ] Make menus absolutly finalisable(mutable menu to immutable menu)(for force you to conside all usecases on menu creating stage)
+- [+] Some stuffs
 
 
 

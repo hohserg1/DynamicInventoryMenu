@@ -7,7 +7,7 @@ Powerful api for create dynamically updated bukkit ui
 ## Usage
 - add library to you project(you can use jitpack.io for this)
 
-- create menu fabric(partial function)
+- create menu fabric
 
 ```Scala
 val menu: Player => Menu = new Menu(_, "Title", size=45)

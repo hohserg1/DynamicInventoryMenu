@@ -15,22 +15,22 @@ import scala.Tuple2;
 import scala.collection.TraversableOnce;
 
 public class ListView<A> extends hohserg.inventorymenu.menu.ListView {
-    public ListView(Player player, String name, int height,
+    public ListView(String id, Player player, String name, int height,
                     CollectionObservable<A> collection,
                     Function1<A, ItemStack> visualize,
                     Area area,
                     ItemStack borderFiller,
                     Function3<Integer, Integer, DataSource<ItemStack>, Function1<Menu, Decoration>> buttonFactory) {
-        super(player, name, height, toScala(collection), visualize, area, borderFiller, buttonFactory);
+        super(id, player, name, height, toScala(collection), visualize, area, borderFiller, buttonFactory);
     }
 
-    public <K, V> ListView(Player player, String name, int height,
+    public <K, V> ListView(String id, Player player, String name, int height,
                            MapObservable<K, V> collection,
                            Function1<A, ItemStack> visualize,
                            Area area,
                            ItemStack borderFiller,
                            Function3<Integer, Integer, DataSource<ItemStack>, Function1<Menu, Decoration>> buttonFactory) {
-        super(player, name, height, toScala(collection), visualize, area, borderFiller, buttonFactory);
+        super(id, player, name, height, toScala(collection), visualize, area, borderFiller, buttonFactory);
     }
 
     private static <K, V> TraversableOnce<Tuple2<K, V>> toScala(MapObservable<K, V> collection) {
@@ -41,15 +41,16 @@ public class ListView<A> extends hohserg.inventorymenu.menu.ListView {
         return CollectionWithTraitConversions.convert(collection);
     }
 
-    public static <A> Function2<Player, String, ListView> apply(int height,
+    public static <A> Function2<String, Player, ListView> apply(String title,
+                                                                int height,
                                                                 CollectionObservable<A> collection,
                                                                 Function1<A, ItemStack> visualize,
                                                                 Area area,
                                                                 ItemStack borderFiller,
                                                                 Function3<Integer, Integer, DataSource<ItemStack>, Function1<Menu, Decoration>> buttonFactory,
                                                                 Function1<hohserg.inventorymenu.menu.Menu, MenuItem>... menuItems) {
-        return (Player player, String title) -> {
-            ListView<A> r = new ListView<>(player, title, height, collection,
+        return (String id, Player player) -> {
+            ListView<A> r = new ListView<>(id, player, title, height, collection,
                     visualize,
                     area,
                     borderFiller,
@@ -59,19 +60,17 @@ public class ListView<A> extends hohserg.inventorymenu.menu.ListView {
         };
     }
 
-    public static <K, V> Function2<Player, String, ListView> apply(int height,
+    public static <K, V> Function2<String, Player, ListView> apply(String title,
+                                                                   int height,
                                                                    MapObservable<K, V> collection,
                                                                    Function1<Tuple2<K, V>, ItemStack> visualize,
                                                                    Area area,
                                                                    ItemStack borderFiller,
-                                                                   Function3<Object, Object, DataSource<ItemStack>, Function1<Menu, Decoration>> buttonFactory,
+                                                                   Function3<Integer, Integer, DataSource<ItemStack>, Function1<Menu, Decoration>> buttonFactory,
                                                                    Function1<hohserg.inventorymenu.menu.Menu, MenuItem>... menuItems) {
-        return (Player player, String title) -> {
-            ListView<Tuple2<K, V>> r = new ListView<>(player, title, height, collection,
-                    visualize,
-                    area,
-                    borderFiller,
-                    buttonFactory);
+        return (String id, Player player) -> {
+            ListView<Tuple2<K, V>> r = new ListView<>(id, player, title, height, collection,
+                    visualize, area, borderFiller, buttonFactory);
             r.addAll(menuItems);
             return r;
         };

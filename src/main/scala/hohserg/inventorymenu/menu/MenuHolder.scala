@@ -1,11 +1,8 @@
 package hohserg.inventorymenu.menu
 
-import java.util.UUID
-
 import org.bukkit.inventory.{Inventory, InventoryHolder}
 
-class MenuHolder(menu: Menu) extends InventoryHolder {
-  def id: String = menu.name + UUID.randomUUID()
+class MenuHolder(menu: Menu,val id:String) extends InventoryHolder {
 
   override def getInventory: Inventory = menu.inv
 }

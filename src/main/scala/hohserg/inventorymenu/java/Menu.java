@@ -10,13 +10,13 @@ import scala.collection.Seq;
 import java.util.Arrays;
 
 public class Menu extends hohserg.inventorymenu.menu.Menu {
-    public Menu(Player player, String name, int height) {
-        super(player, name, height);
+    public Menu(String id, Player player, String name, int height) {
+        super(id, player, name, height);
     }
 
-    public static Function2<Player, String, Menu> apply(int height, Function1<hohserg.inventorymenu.menu.Menu, MenuItem>... menuItems) {
-        return (player, title) -> {
-            Menu r = new Menu(player, title, height);
+    public static Function2<String, Player, Menu> apply(String title, int height, Function1<hohserg.inventorymenu.menu.Menu, MenuItem>... menuItems) {
+        return (id, player) -> {
+            Menu r = new Menu(id, player, title, height);
             r.addAll(menuItems);
             return r;
         };

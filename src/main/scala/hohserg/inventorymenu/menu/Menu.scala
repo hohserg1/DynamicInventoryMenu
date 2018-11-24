@@ -1,6 +1,7 @@
 package hohserg.inventorymenu.menu
 
 import java.util
+import java.util.UUID
 
 import hohserg.inventorymenu.java.MenuFactory
 import hohserg.inventorymenu.menu.ListView.Area
@@ -12,11 +13,11 @@ import org.bukkit.inventory.ItemStack
 
 import scala.collection.{Iterable, mutable}
 
-class Menu(val player: Player, val name: String, val height: Int) {
+class Menu(id: String, val player: Player, val name: String, val height: Int) {
   val width = 9
   val size: Int = height * width
 
-  private[menu] val holder = new MenuHolder(this)
+  private[menu] val holder = new MenuHolder(this, id)
 
   private[menu] val inv = Bukkit.createInventory(holder, size, name)
   val items = new Array[Array[MenuItem]](9).map(_ => new Array[MenuItem](height))
@@ -104,13 +105,13 @@ class Menu(val player: Player, val name: String, val height: Int) {
 
 object Menu {
 
-  def applyOrCreate[A <: Menu](id: String, create: Player => A): MenuFactory[A] = applyOrCreate(_, id, create(_))
+  def applyOrCreate[A <: Menu](create: (String, Player) => A): MenuFactory[A] = applyOrCreate(_, UUID.randomUUID().toString, create(_, _))
 
-  def applyOrCreate[A <: Menu](player: Player, id: String, create: Player => A): A = apply(id, player).getOrElse(register(create(player), player))
+  private def applyOrCreate[A <: Menu](player: Player, id: String, create: (String, Player) => A): A = apply(id, player).getOrElse(register(create(id, player), player))
 
-  def apply[A <: Menu](id: String, player: Player): Option[A] = map.get((id, player)).asInstanceOf[Option[A]]
+  private[menu] def apply[A <: Menu](id: String, player: Player): Option[A] = map.get((id, player)).asInstanceOf[Option[A]]
 
-  val map = new mutable.OpenHashMap[(String, Player), Menu]
+  private val map = new mutable.OpenHashMap[(String, Player), Menu]
 
   private def register[A <: Menu](menu: A, player: Player): A = {
     map += (menu.holder.id, player) -> menu

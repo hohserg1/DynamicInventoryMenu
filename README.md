@@ -10,14 +10,14 @@ Powerful api for create dynamically updated bukkit ui
 - create menu fabric
 
 ```Scala
-val menu: Player => Menu = new Menu(_, "Title", size=45)
+val menu: Player => Menu = Menu.applyOrCreate(new Menu(_, "Title", size=45))
 ```
 
 - add buttons and decorations
 
 ```Scala
-val menu: Player => Menu = new Menu(_, "Title", size=45)
-  .addDecoration(new ItemStack(Material.APPLE), 1, 1)
+val menu: Player => Menu = Menu.applyOrCreate(new Menu(_, "Title", size=45)
+  .addDecoration(new ItemStack(Material.APPLE), 1, 1))
   ```
   
 - when you need to open menu
@@ -30,7 +30,9 @@ menu(player).open()
 - [x] Basic architecture
 - [x] List view for OpenHashMap
 - [x] List view for any collection
-- [ ] Java syntax and collection support
+- [x] Java syntax and collection support
+- [ ] Component abstract level
+- [ ] Make menus absolutly finalisable(mutable menu to immutable menu)(for force you to conside all usecases on menu creating stage)
 - [ ] Some stuffs
 
 

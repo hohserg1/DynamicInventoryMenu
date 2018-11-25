@@ -1,7 +1,9 @@
 package hohserg.inventorymenu.menu
 
 import hohserg.inventorymenu.menu.ListView.Area
+import hohserg.inventorymenu.menu.menuitems.{Button, Clickable, Decoration}
 import hohserg.inventorymenu.notify.Observable
+import hohserg.inventorymenu.utils.ItemUtils._
 import org.bukkit.block.banner.PatternType
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
@@ -9,22 +11,23 @@ import org.bukkit.{DyeColor, Material}
 
 import scala.collection.mutable.ArrayBuffer
 
-class ListView[A](player: Player, name: String, size: Int, collection: TraversableOnce[A] with Observable, visualize: A => ItemStack, area: Area, borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE)) extends Menu(player, name, size) {
+class ListView[A](player: Player, name: String,
+                  height: Int,
+                  collection: TraversableOnce[A] with Observable,
+                  visualize: A => ItemStack,
+                  area: Area,
+                  borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE),
+                  buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => Decoration = Decoration.apply) extends Menu(player, name, height) {
+
   val source = ListedSource(collection, area.square, visualize)
   val page = source.getItem
 
-  for {
-    (x, y) <- Area(0, 0, 8, 4)
-    if !area.contains(x, y)
-  }
-    addDecoration(borderFiller, x, y)
+  addBorder(borderFiller)
 
   for {
     (x, y) <- area
   }
-    addDecoration(SelectedSource(page, x - area.x1 + (y - area.y1) * (area.x2 - area.x1 + 1), visualize), x, y)
-
-  import hohserg.inventorymenu.utils.ItemUtils._
+    this += buttonFactory(x, y, SelectedSource(page, x - area.x1 + (y - area.y1) * (area.x2 - area.x1 + 1), visualize))
 
   def getIconFor(direction: Int, color: DyeColor): ItemStack = {
     if (direction < 0)
@@ -38,21 +41,21 @@ class ListView[A](player: Player, name: String, size: Int, collection: Traversab
       .addPageIndicator(x, y, color, text._2)
       .addScrollButton(1, x, y + 1, color, text._3)
 
-  def addScrollButton(direction: Int, x: Int, y: Int, color: DyeColor, text: String): this.type =
-    addScrollButton(direction, x, y, getIconFor(direction, color), text)
-
-  private def listingPage(direction: Int): Player => Unit =
-    (_: Player) => {
+  private def listingPage(direction: Int): (Player, Clickable) => Unit =
+    (_, _) => {
       val newPage = source.page + direction
       if (newPage >= 0 && newPage < source.pageCount)
         source.page = newPage
     }
 
+  def addScrollButton(direction: Int, x: Int, y: Int, color: DyeColor, text: String): this.type =
+    addScrollButton(direction, x, y, getIconFor(direction, color), text)
+
   def addScrollButton(direction: Int, x: Int, y: Int, item: ItemStack, text: String): this.type =
-    addButton(lorize(item, text), x, y, listingPage(direction))
+    this += Button(x, y, lorize(item, text), listingPage(direction))
 
   def addPageIndicator(x: Int, y: Int, item: ItemStack, text: String): this.type =
-    addDecoration(VariableSource[ArrayBuffer[A] with Observable](page, _ => lorize(item, text.format(source.page + 1, source.pageCount))), x, y)
+    this += Decoration(x, y, VariableSource[ArrayBuffer[A] with Observable](page, _ => lorize(item, text.format(source.page + 1, source.pageCount))))
 
   def addPageIndicator(x: Int, y: Int, color: DyeColor, text: String): this.type =
     addPageIndicator(x, y, banner(PatternType.BASE, color), text)
@@ -72,6 +75,15 @@ object ListView {
         x <- x1 to x2
         y <- y1 to y2
       } yield (x, y)).iterator
+  }
+
+  //java_support
+  def apply[A](height: Int,
+               collection: TraversableOnce[A] with Observable, visualize: A => ItemStack,
+               area: Area,
+               borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE),
+               buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => Decoration = Decoration.apply): (Player, String) => ListView[A] = {
+    new ListView[A](_, _, height, collection, visualize, area, borderFiller, buttonFactory)
   }
 
 }

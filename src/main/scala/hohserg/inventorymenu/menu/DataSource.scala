@@ -5,7 +5,7 @@ import org.bukkit.inventory.ItemStack
 
 import scala.collection.mutable.ArrayBuffer
 
-trait DataSource[A] extends Observable with Pipe {
+trait DataSource[A] extends Pipe {
   def getItem: A
 }
 
@@ -46,7 +46,6 @@ case class ListedSource[A](collection: TraversableOnce[A] with Observable, pageS
 
   private def updatedPageContent(): Unit = {
     val pageStart = page * pageSize
-    println(_pageMap)
     _pageMap.clear()
     _pageMap ++= collection.toList.slice(pageStart, pageStart + pageSize)
   }
@@ -55,8 +54,8 @@ case class ListedSource[A](collection: TraversableOnce[A] with Observable, pageS
 
   collection.addNotified(this)
 
-  override def onUpdate(): Unit = {
-    super.onUpdate()
+  override def onNotified(): Unit = {
+    super.onNotified()
     updatedPageContent()
   }
 }

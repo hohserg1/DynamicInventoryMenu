@@ -1,52 +1,76 @@
 package hohserg.inventorymenu.menu
 
-import hohserg.inventorymenu.menu.Menu.ClickHandler
+import java.util
+
+import hohserg.inventorymenu.java.MenuFactory
+import hohserg.inventorymenu.menu.ListView.Area
+import hohserg.inventorymenu.menu.menuitems.Clickable.ClickHandler
+import hohserg.inventorymenu.menu.menuitems._
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
-import scala.collection.mutable
-import scala.collection.mutable.ListBuffer
+import scala.collection.{Iterable, mutable}
 
-class Menu(val player: Player, val name: String, val size: Int) {
-  Menu.register(this, player)
-  private[menu] val inv = Bukkit.createInventory(null, size, name)
-  val buttons = new ListBuffer[Button]()
-  val decorations = new ListBuffer[Decoration]()
+class Menu(val player: Player, val name: String, val height: Int) {
+  val width = 9
+  val size: Int = height * width
 
-  private val noAction: ClickHandler = _ => ()
+  private[menu] val holder = new MenuHolder(this)
 
-  def addButton(item: DataSource[ItemStack], x: Int, y: Int, clickHandler: ClickHandler): this.type = {
-    buttons += Button(this, x, y, item, clickHandler)
-    item match{
-      case ConstSource(itemStack)=>registerHandler(itemStack,clickHandler)
-      case _=>registerHandler(item,clickHandler)
+  private[menu] val inv = Bukkit.createInventory(holder, size, name)
+  val items = new Array[Array[MenuItem]](9).map(_ => new Array[MenuItem](height))
+
+  def ++=(button: Iterable[Menu => MenuItem]): this.type = {
+    button.foreach(+=)
+    this
+  }
+
+  def addBorder(borderFiller: ItemStack): this.type = {
+    for {
+      (x, y) <- Area(0, 0, width - 1, height - 1)
+      if !Area(1, 1, width - 2, height - 2).contains(x, y)
+    }
+      this += Decoration(x, y, borderFiller)
+    this
+  }
+
+  def -=(x: Int, y: Int): this.type = {
+    val menuItem = items(x)(y)
+    menuItem match {
+      case clickable: Clickable =>
+        val handler = clickable.clickHandler
+        clickable.source match {
+          case ConstSource(itemStack) =>
+            clickHandlersMap -= itemStack
+          case source =>
+            clickHandlersList.remove(clickHandlersList.indexOf((source, handler(_: Player, clickable))))
+        }
+      case _ =>
     }
     this
   }
 
-  def addButton(item: ItemStack, x: Int, y: Int, clickHandler: ClickHandler): this.type =
-    addButton(ConstSource(item), x, y,clickHandler)
+  def +=(button: Menu => MenuItem): this.type = {
+    val btn = button(this)
 
+    Option(items(btn.x)(btn.y)).foreach(_ => -=(btn.x, btn.y))
 
-  def addButtons(buttons:Seq[(DataSource[ItemStack],Int, Int,ClickHandler)]): this.type = {
-    buttons.foreach(i=>addButton(i._1,i._2,i._3,i._4))
+    items(btn.x)(btn.y) = btn
+    btn match {
+      case clickable: Clickable =>
+        val handler = clickable.clickHandler
+        clickable.source match {
+          case ConstSource(itemStack) =>
+            registerHandler(itemStack, handler, clickable)
+          case source =>
+            registerHandler(source, handler, clickable)
+
+        }
+      case _ =>
+    }
     this
   }
-
-  def addDecoration(item: DataSource[ItemStack], x: Int, y: Int): this.type = {
-    decorations += Decoration(this, x, y, item)
-    this
-  }
-
-  def addDecoration(item: ItemStack, x: Int, y: Int): this.type =
-    addDecoration(ConstSource(item), x, y)
-
-  def addDecorations(decorations:Seq[(DataSource[ItemStack],Int, Int)]): this.type = {
-    decorations.foreach(i=>addDecoration(i._1,i._2,i._3))
-    this
-  }
-
 
   def open() = {
     player openInventory inv
@@ -56,30 +80,41 @@ class Menu(val player: Player, val name: String, val size: Int) {
     clickHandlersMap.get(clicked).orElse(clickHandlersList.find(_._1.getItem == clicked).map(_._2)).foreach(_ (player))
   }
 
-  val clickHandlersList = new mutable.ListBuffer[(DataSource[ItemStack], ClickHandler)]()
+  private val clickHandlersList = new mutable.ListBuffer[(DataSource[ItemStack], Player => Any)]()
 
-  val clickHandlersMap = new mutable.OpenHashMap[ItemStack, ClickHandler]()
+  private val clickHandlersMap = new mutable.OpenHashMap[ItemStack, Player => Any]()
 
-  def registerHandler(item: DataSource[ItemStack], clickHandler: ClickHandler): Unit =
-    clickHandlersList += item -> clickHandler
+  def registerHandler(item: DataSource[ItemStack], clickHandler: ClickHandler, menuItem: Clickable): Unit =
+    clickHandlersList += item -> (clickHandler(_, menuItem))
 
-  def registerHandler(item: ItemStack, clickHandler: ClickHandler): Unit =
-    clickHandlersMap += item -> clickHandler
+  def registerHandler(item: ItemStack, clickHandler: ClickHandler, menuItem: Clickable): Unit =
+    clickHandlersMap += item -> (clickHandler(_, menuItem))
+
+  //java-support
+  def add(button: Menu => MenuItem): Menu = this += button
+
+  import collection.JavaConverters._
+
+  def addAll(button: util.Collection[Menu => MenuItem]): Menu = this ++= button.asScala
+
+  def addAll(button: Array[Menu => MenuItem]): Menu = this ++= button
 
 
 }
 
 object Menu {
-  type ClickHandler = Player => Any
 
-  def applyOrCreate(player: Player, name: String, create: Player => Menu): Menu = apply(name, player).getOrElse(create(player))
+  def applyOrCreate[A <: Menu](id: String, create: Player => A): MenuFactory[A] = applyOrCreate(_, id, create(_))
 
-  def apply(name: String, player: Player): Option[Menu] = map.get((name, player))
+  def applyOrCreate[A <: Menu](player: Player, id: String, create: Player => A): A = apply(id, player).getOrElse(register(create(player), player))
+
+  def apply[A <: Menu](id: String, player: Player): Option[A] = map.get((id, player)).asInstanceOf[Option[A]]
 
   val map = new mutable.OpenHashMap[(String, Player), Menu]
 
-  def register(menu: Menu, player: Player): Unit = {
-    map += (menu.name, player) -> menu
+  private def register[A <: Menu](menu: A, player: Player): A = {
+    map += (menu.holder.id, player) -> menu
+    menu
   }
 
 }

@@ -1,5 +1,5 @@
 package hohserg.inventorymenu.notify
 
-trait Pipe extends Notified with Observable {
-  override def onUpdate(): Unit = notifyAllObjects()
+trait Pipe extends AbleNotify with Observable {
+  override def onNotified(): Unit = notifyAllObjects()
 }

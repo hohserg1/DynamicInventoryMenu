@@ -44,8 +44,8 @@ object Examples {
   val clickSource = new DataSource[ItemStack] {
     override def getItem: ItemStack = new ItemStack(Material.APPLE, Bukkit.getWorld("world").getTime.toInt / 100)
   }
-  val menu = Menu.applyOrCreate("Hello World!",
-    new Menu(_, _, 3)
+  val menu = Menu.applyOrCreate(
+    new Menu(_, _, "Hello World!", 3)
       += Decoration(4, 1, VariableSource(worldTime, (time: AtomicInteger) => new ItemStack(Material.APPLE, time.get() / 750)))
   )
 
@@ -65,8 +65,8 @@ object Examples {
 
   val df = new SimpleDateFormat("EEEEE dd MMMMM yyyy")
 
-  val menu1 = Menu.applyOrCreate("My marks",
-    new ListView[(Location, Date)](_, _, 5,
+  val menu1 = Menu.applyOrCreate(
+    new ListView[(Location, Date)](_, _,"My marks", 5,
       marks,
       { case (loc: Location, date: Date) => lorize(new ItemStack(Material.EMERALD), "" + loc.getBlockX + " " + loc.getBlockY + " " + loc.getBlockZ + " " + df.format(date)) },
       Area(1, 1, 7, 3))
@@ -74,8 +74,8 @@ object Examples {
       += Button(8, 2, lorize(new ItemStack(Material.NETHER_STAR), "Добавить метку"), (player: Player, _: Clickable) => marks += player.getLocation -> new Date())
   )
 
-  val menu2 = Menu.applyOrCreate("TestListView",
-    new ListView(_, _, 5, map, tupleToStack, Area(1, 1, 7, 3))
+  val menu2 = Menu.applyOrCreate(
+    new ListView(_, _, "TestListView",5, map, tupleToStack, Area(1, 1, 7, 3))
       .addScroll(0, 2, DyeColor.CYAN, ("Вверх", "Страница %d из %d", "Вниз"))
   )
   var i = 0

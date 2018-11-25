@@ -11,13 +11,13 @@ import org.bukkit.{DyeColor, Material}
 
 import scala.collection.mutable.ArrayBuffer
 
-class ListView[A](player: Player, name: String,
+class ListView[A](id: String, player: Player, name: String,
                   height: Int,
                   collection: TraversableOnce[A] with Observable,
                   visualize: A => ItemStack,
                   area: Area,
                   borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE),
-                  buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => Decoration = Decoration.apply) extends Menu(player, name, height) {
+                  buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => Decoration = Decoration.apply) extends Menu(id, player, name, height) {
 
   val source = ListedSource(collection, area.square, visualize)
   val page = source.getItem
@@ -78,12 +78,13 @@ object ListView {
   }
 
   //java_support
-  def apply[A](height: Int,
+  def apply[A](name: String,
+               height: Int,
                collection: TraversableOnce[A] with Observable, visualize: A => ItemStack,
                area: Area,
                borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE),
-               buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => Decoration = Decoration.apply): (Player, String) => ListView[A] = {
-    new ListView[A](_, _, height, collection, visualize, area, borderFiller, buttonFactory)
+               buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => Decoration = Decoration.apply): (String, Player) => ListView[A] = {
+    new ListView[A](_, _, name, height, collection, visualize, area, borderFiller, buttonFactory)
   }
 
 }

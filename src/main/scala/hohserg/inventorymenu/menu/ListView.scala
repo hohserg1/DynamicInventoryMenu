@@ -1,7 +1,7 @@
 package hohserg.inventorymenu.menu
 
 import hohserg.inventorymenu.menu.ListView.Area
-import hohserg.inventorymenu.menu.menuitems.{Button, Clickable, Decoration}
+import hohserg.inventorymenu.menu.menuitems.{Button, Clickable, Decoration, MenuItem}
 import hohserg.inventorymenu.notify.Observable
 import hohserg.inventorymenu.utils.ItemUtils._
 import org.bukkit.block.banner.PatternType
@@ -17,7 +17,7 @@ class ListView[A](id: String, player: Player, name: String,
                   visualize: A => ItemStack,
                   area: Area,
                   borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE),
-                  buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => Decoration = Decoration.apply) extends Menu(id, player, name, height) {
+                  buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => MenuItem = Decoration.apply) extends Menu(id, player, name, height) {
 
   val source = ListedSource(collection, area.square, visualize)
   val page = source.getItem

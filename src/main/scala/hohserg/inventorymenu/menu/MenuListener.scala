@@ -7,7 +7,6 @@ import org.bukkit.event.{EventHandler, Listener}
 class MenuListener extends Listener {
   @EventHandler
   def onClick(e: InventoryClickEvent): Unit = {
-    e.getClick
     val player = e.getWhoClicked.asInstanceOf[Player]
     val clicked = e.getCurrentItem
     val inventory = e.getInventory

@@ -6,7 +6,7 @@ import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 
 case class OpenMenuButton(menu: Menu, x: Int, y: Int, source: DataSource[ItemStack], openMenuOnClick: Player => Menu) extends Clickable {
-  override def clickHandler: ClickHandler = (p, _) => openMenuOnClick(p).open()
+  override def clickHandler: ClickHandler = (p, _, _) => openMenuOnClick(p).open()
 }
 
 object OpenMenuButton {

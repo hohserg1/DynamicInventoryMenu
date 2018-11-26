@@ -9,6 +9,7 @@ import hohserg.inventorymenu.menu.menuitems.Clickable.ClickHandler
 import hohserg.inventorymenu.menu.menuitems._
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.ItemStack
 
 import scala.collection.{Iterable, mutable}
@@ -45,7 +46,7 @@ class Menu(id: String, val player: Player, val name: String, val height: Int) {
           case ConstSource(itemStack) =>
             clickHandlersMap -= itemStack
           case source =>
-            clickHandlersList.remove(clickHandlersList.indexOf((source, handler(_: Player, clickable))))
+            clickHandlersList.remove(clickHandlersList.indexOf((source, handler(_: Player, clickable, _: ClickType))))
         }
       case _ =>
     }
@@ -77,19 +78,19 @@ class Menu(id: String, val player: Player, val name: String, val height: Int) {
     player openInventory inv
   }
 
-  def onClick(player: Player, clicked: ItemStack): Unit = {
-    clickHandlersMap.get(clicked).orElse(clickHandlersList.find(_._1.getItem == clicked).map(_._2)).foreach(_ (player))
+  def onClick(player: Player, clicked: ItemStack, clickType: ClickType): Unit = {
+    clickHandlersMap.get(clicked).orElse(clickHandlersList.find(_._1.getItem == clicked).map(_._2)).foreach(_ (player, clickType))
   }
 
-  private val clickHandlersList = new mutable.ListBuffer[(DataSource[ItemStack], Player => Any)]()
+  private val clickHandlersList = new mutable.ListBuffer[(DataSource[ItemStack], (Player, ClickType) => Any)]()
 
-  private val clickHandlersMap = new mutable.OpenHashMap[ItemStack, Player => Any]()
+  private val clickHandlersMap = new mutable.OpenHashMap[ItemStack, (Player, ClickType) => Any]()
 
   def registerHandler(item: DataSource[ItemStack], clickHandler: ClickHandler, menuItem: Clickable): Unit =
-    clickHandlersList += item -> (clickHandler(_, menuItem))
+    clickHandlersList += item -> (clickHandler(_, menuItem, _))
 
   def registerHandler(item: ItemStack, clickHandler: ClickHandler, menuItem: Clickable): Unit =
-    clickHandlersMap += item -> (clickHandler(_, menuItem))
+    clickHandlersMap += item -> (clickHandler(_, menuItem, _))
 
   //java-support
   def add(button: Menu => MenuItem): Menu = this += button

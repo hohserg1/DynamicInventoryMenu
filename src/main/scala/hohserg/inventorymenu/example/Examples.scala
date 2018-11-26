@@ -11,6 +11,7 @@ import hohserg.inventorymenu.menu.menuitems.{Button, Clickable, Decoration}
 import hohserg.inventorymenu.notify.{CollectionObservable, Observable, OpenObservable}
 import org.bukkit.{Bukkit, DyeColor, Location, Material}
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
 
@@ -71,7 +72,7 @@ object Examples {
       { case (loc: Location, date: Date) => lorize(new ItemStack(Material.EMERALD), "" + loc.getBlockX + " " + loc.getBlockY + " " + loc.getBlockZ + " " + df.format(date)) },
       Area(1, 1, 7, 3))
       .addScroll(0, 2, DyeColor.RED, ("Вверх", "Страница %d/%d", "Вниз"))
-      += Button(8, 2, lorize(new ItemStack(Material.NETHER_STAR), "Добавить метку"), (player: Player, _: Clickable) => marks += player.getLocation -> new Date())
+      += Button(8, 2, lorize(new ItemStack(Material.NETHER_STAR), "Добавить метку"), (player: Player, _: Clickable,_:ClickType) => marks += player.getLocation -> new Date())
   )
 
   val menu2 = Menu.applyOrCreate(

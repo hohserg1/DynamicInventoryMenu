@@ -6,6 +6,7 @@ import hohserg.inventorymenu.notify.Observable
 import hohserg.inventorymenu.utils.ItemUtils._
 import org.bukkit.block.banner.PatternType
 import org.bukkit.entity.Player
+import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.ItemStack
 import org.bukkit.{DyeColor, Material}
 
@@ -41,8 +42,8 @@ class ListView[A](id: String, player: Player, name: String,
       .addPageIndicator(x, y, color, text._2)
       .addScrollButton(1, x, y + 1, color, text._3)
 
-  private def listingPage(direction: Int): (Player, Clickable) => Unit =
-    (_, _) => {
+  private def listingPage(direction: Int): (Player, Clickable, ClickType) => Unit =
+    (_, _, _) => {
       val newPage = source.page + direction
       if (newPage >= 0 && newPage < source.pageCount)
         source.page = newPage

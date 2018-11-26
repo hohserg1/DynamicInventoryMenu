@@ -14,8 +14,8 @@ class MenuListener extends Listener {
       id =>
         Menu[Menu](id, player).foreach { menu =>
           e.setCancelled(true)
-          menu.onClick(player, clicked)
         }
+        menu.onClick(player, clicked,e.getClick)
     }
   }
 }

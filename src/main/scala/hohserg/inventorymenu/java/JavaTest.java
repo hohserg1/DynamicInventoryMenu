@@ -9,7 +9,7 @@ import scala.Function1;
 
 public class JavaTest {
     MenuFactory<Menu> menu1 = Menu.applyOrCreate(Menu.apply("Test", 5, Button.apply(0, 0, new ItemStack(Material.APPLE),
-            (player, button) -> {
+            (player, button,clickType) -> {
                 //click
                 return null;
             }

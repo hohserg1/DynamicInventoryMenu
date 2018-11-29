@@ -6,7 +6,7 @@ workflows:
     jobs:
       - hello/hello-build
 commands:
-  build:
+  build1:
     description: "build project"
     parameters:
     steps:
@@ -20,5 +20,5 @@ jobs:
       only:
         - master
     steps:
-      - run: make build
+      - run: make build1
 

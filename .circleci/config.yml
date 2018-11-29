@@ -23,7 +23,7 @@ jobs:
     branches:
       only:
         - master
-        - /stable-.*/
+        - stable-.*
     steps:
       - run: make build
 

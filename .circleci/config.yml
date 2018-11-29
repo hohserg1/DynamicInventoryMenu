@@ -19,7 +19,6 @@ jobs:
     branches:
       only:
         - master
-        - stable-.*
     steps:
       - run: make build
 

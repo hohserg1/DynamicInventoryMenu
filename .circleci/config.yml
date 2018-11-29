@@ -13,10 +13,6 @@ commands:
       - run: gradlew build
 jobs:
   build:
-    docker:
-      - image: buildpack-deps:trusty
-    environment:
-      FOO: bar
     parallelism: 1
     resource_class: large
     working_directory: ~/

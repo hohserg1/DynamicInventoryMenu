@@ -1,0 +1,29 @@
+version: 2.1
+orbs:
+  hello: circleci/hello-build@0.0.5
+workflows:
+  "Hello Workflow":
+    jobs:
+      - hello/hello-build
+commands:
+  build:
+    description: "build project"
+    parameters:
+    steps:
+      - run: gradlew build
+jobs:
+  build:
+    docker:
+      - image: buildpack-deps:trusty
+    environment:
+      FOO: bar
+    parallelism: 1
+    resource_class: large
+    working_directory: ~/
+    branches:
+      only:
+        - master
+        - /stable-.*/
+    steps:
+      - run: make build
+

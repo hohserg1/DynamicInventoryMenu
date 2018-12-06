@@ -78,9 +78,21 @@ class Menu(id: String, val player: Player, val name: String, val height: Int) {
     player openInventory inv
   }
 
+  def open(closingHandler: Menu => Unit) = {
+    this.closingHandler = Some(closingHandler)
+    player openInventory inv
+  }
+
   def onClick(player: Player, clicked: ItemStack, clickType: ClickType): Unit = {
     clickHandlersMap.get(clicked).orElse(clickHandlersList.find(_._1.getItem == clicked).map(_._2)).foreach(_ (player, clickType))
   }
+
+  def onClose(): Unit = {
+    closingHandler.foreach(_ (this))
+    closingHandler = None
+  }
+
+  private var closingHandler: Option[Menu => Unit] = None
 
   private val clickHandlersList = new mutable.ListBuffer[(DataSource[ItemStack], (Player, ClickType) => Any)]()
 

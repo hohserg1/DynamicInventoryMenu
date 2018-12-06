@@ -46,7 +46,7 @@ class Menu(id: String, val player: Player, val name: String, val height: Int) {
           case ConstSource(itemStack) =>
             clickHandlersMap -= itemStack
           case source =>
-            clickHandlersList.remove(clickHandlersList.indexOf((source, handler(_: Player, clickable, _: ClickType))))
+            clickHandlersList.remove(clickHandlersList.indexOf((source, clickable -> handler)))
         }
       case _ =>
     }
@@ -84,8 +84,19 @@ class Menu(id: String, val player: Player, val name: String, val height: Int) {
   }
 
   def onClick(player: Player, clicked: ItemStack, clickType: ClickType): Unit = {
-    clickHandlersMap.get(clicked).orElse(clickHandlersList.find(_._1.getItem == clicked).map(_._2)).foreach(_ (player, clickType))
+    val clickHandler = clickHandlersMap
+      .get(clicked)
+      .orElse(clickHandlersList
+        .find(_._1.getItem == clicked)
+        .map(_._2))
+
+    _lastClicked = clickHandler.map(_._1)
+    clickHandler.foreach(i => i._2(player, i._1, clickType))
   }
+
+  private var _lastClicked: Option[Clickable] = None
+
+  def lastClicked: Option[Clickable] = _lastClicked
 
   def onClose(): Unit = {
     closingHandler.foreach(_ (this))
@@ -94,15 +105,15 @@ class Menu(id: String, val player: Player, val name: String, val height: Int) {
 
   private var closingHandler: Option[Menu => Unit] = None
 
-  private val clickHandlersList = new mutable.ListBuffer[(DataSource[ItemStack], (Player, ClickType) => Any)]()
+  private val clickHandlersList = new mutable.ListBuffer[(DataSource[ItemStack], (Clickable, ClickHandler))]()
 
-  private val clickHandlersMap = new mutable.OpenHashMap[ItemStack, (Player, ClickType) => Any]()
+  private val clickHandlersMap = new mutable.OpenHashMap[ItemStack, (Clickable, ClickHandler)]()
 
   def registerHandler(item: DataSource[ItemStack], clickHandler: ClickHandler, menuItem: Clickable): Unit =
-    clickHandlersList += item -> (clickHandler(_, menuItem, _))
+    clickHandlersList += item -> (menuItem -> clickHandler)
 
   def registerHandler(item: ItemStack, clickHandler: ClickHandler, menuItem: Clickable): Unit =
-    clickHandlersMap += item -> (clickHandler(_, menuItem, _))
+    clickHandlersMap += item -> (menuItem -> clickHandler)
 
   //java-support
   def add(button: Menu => MenuItem): Menu = this += button

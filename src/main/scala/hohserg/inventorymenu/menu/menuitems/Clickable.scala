@@ -1,6 +1,6 @@
 package hohserg.inventorymenu.menu.menuitems
 
-import Clickable.ClickHandler
+import hohserg.inventorymenu.menu.menuitems.Clickable.ClickHandler
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
 
@@ -13,5 +13,6 @@ object Clickable {
   /**
     * return value always ignored
     */
-  type ClickHandler = (Player, Clickable,ClickType) => Any
+  type ClickHandler = (Player, Clickable) => PartialFunction[ClickType, Any]
+  type ClickHandler_without_click_type = (Player, Clickable) => Any
 }

@@ -89,9 +89,11 @@ class Menu(id: String, val player: Player, val name: String, val height: Int) {
       .orElse(clickHandlersList
         .find(_._1.getItem == clicked)
         .map(_._2))
+        .map(i=>i.copy(_2=i._2(player,i._1)))
+        .filter(i=>i._2.isDefinedAt(clickType))
 
     _lastClicked = clickHandler.map(_._1)
-    clickHandler.foreach(i => i._2(player, i._1, clickType))
+    clickHandler.foreach(i => i._2(clickType))
   }
 
   private var _lastClicked: Option[Clickable] = None

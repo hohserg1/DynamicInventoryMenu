@@ -84,17 +84,17 @@ class Menu(id: String, val player: Player, val name: String, val height: Int) {
   }
 
   def onClick(player: Player, clicked: ItemStack, clickType: ClickType): Unit = {
-    val clickHandler = clickHandlersMap
+    val clickRequest = clickHandlersMap
       .get(clicked)
       .orElse(
         clickHandlersList
           .find(_._1.getItem == clicked)
           .map(_._2))
-      .map(i => (i._1, ClickEvent(player, i._1, clickType), i._2))
-      .filter(i => i._3.isDefinedAt(i._2))
+      .map { case (clickable, clickHandler) => (clickable, ClickEvent(player, clickable, clickType), clickHandler) }
+      .filter { case (_, clickEvent, clickHandler) => clickHandler isDefinedAt clickEvent }
 
-    _lastClicked = clickHandler.map(_._1)
-    clickHandler.foreach(i => i._3(i._2))
+    _lastClicked = clickRequest.map(_._1)
+    clickRequest.foreach(i => i._3(i._2))
   }
 
   private var _lastClicked: Option[Clickable] = None

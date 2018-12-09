@@ -5,7 +5,7 @@ import java.util.UUID
 
 import hohserg.inventorymenu.java.MenuFactory
 import hohserg.inventorymenu.menu.ListView.Area
-import hohserg.inventorymenu.menu.menuitems.Clickable.ClickHandler
+import hohserg.inventorymenu.menu.menuitems.Clickable.{ClickEvent, PartialClickHandler, PartialPartialClickHandler}
 import hohserg.inventorymenu.menu.menuitems._
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -33,7 +33,7 @@ class Menu(id: String, val player: Player, val name: String, val height: Int) {
       (x, y) <- Area(0, 0, width - 1, height - 1)
       if !Area(1, 1, width - 2, height - 2).contains(x, y)
     }
-      this += Decoration(x, y, borderFiller)
+      this += Decoration(x, y).source(borderFiller).build
     this
   }
 
@@ -61,7 +61,7 @@ class Menu(id: String, val player: Player, val name: String, val height: Int) {
     items(btn.x)(btn.y) = btn
     btn match {
       case clickable: Clickable =>
-        val handler = clickable.clickHandler
+        val handler: PartialClickHandler = clickable.clickHandler
         clickable.source match {
           case ConstSource(itemStack) =>
             registerHandler(itemStack, handler, clickable)
@@ -86,14 +86,15 @@ class Menu(id: String, val player: Player, val name: String, val height: Int) {
   def onClick(player: Player, clicked: ItemStack, clickType: ClickType): Unit = {
     val clickHandler = clickHandlersMap
       .get(clicked)
-      .orElse(clickHandlersList
-        .find(_._1.getItem == clicked)
-        .map(_._2))
-        .map(i=>i.copy(_2=i._2(player,i._1)))
-        .filter(i=>i._2.isDefinedAt(clickType))
+      .orElse(
+        clickHandlersList
+          .find(_._1.getItem == clicked)
+          .map(_._2))
+      .map(i => (i._1, ClickEvent(player, i._1, clickType), i._2))
+      .filter(i => i._3.isDefinedAt(i._2))
 
     _lastClicked = clickHandler.map(_._1)
-    clickHandler.foreach(i => i._2(clickType))
+    clickHandler.foreach(i => i._3(i._2))
   }
 
   private var _lastClicked: Option[Clickable] = None
@@ -107,14 +108,14 @@ class Menu(id: String, val player: Player, val name: String, val height: Int) {
 
   private var closingHandler: Option[Menu => Unit] = None
 
-  private val clickHandlersList = new mutable.ListBuffer[(DataSource[ItemStack], (Clickable, ClickHandler))]()
+  private val clickHandlersList = new mutable.ListBuffer[(DataSource[ItemStack], (Clickable, PartialClickHandler))]()
 
-  private val clickHandlersMap = new mutable.OpenHashMap[ItemStack, (Clickable, ClickHandler)]()
+  private val clickHandlersMap = new mutable.OpenHashMap[ItemStack, (Clickable, PartialClickHandler)]()
 
-  def registerHandler(item: DataSource[ItemStack], clickHandler: ClickHandler, menuItem: Clickable): Unit =
+  def registerHandler(item: DataSource[ItemStack], clickHandler: PartialClickHandler, menuItem: Clickable): Unit =
     clickHandlersList += item -> (menuItem -> clickHandler)
 
-  def registerHandler(item: ItemStack, clickHandler: ClickHandler, menuItem: Clickable): Unit =
+  def registerHandler(item: ItemStack, clickHandler: PartialClickHandler, menuItem: Clickable): Unit =
     clickHandlersMap += item -> (menuItem -> clickHandler)
 
   //java-support

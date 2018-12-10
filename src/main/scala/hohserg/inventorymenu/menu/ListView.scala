@@ -85,7 +85,7 @@ object ListView {
                collection: TraversableOnce[A] with Observable, visualize: A => ItemStack,
                area: Area,
                borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE),
-               buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => Decoration = Decoration.apply): (String, Player) => ListView[A] = {
+               buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => MenuItem = Decoration.apply): (String, Player) => ListView[A] = {
     new ListView[A](_, _, name, height, collection, visualize, area, borderFiller, buttonFactory)
   }
 

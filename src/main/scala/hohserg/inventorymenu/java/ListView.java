@@ -20,7 +20,7 @@ public class ListView<A> extends hohserg.inventorymenu.menu.ListView {
                     Function1<A, ItemStack> visualize,
                     Area area,
                     ItemStack borderFiller,
-                    Function3<Integer, Integer, DataSource<ItemStack>, Function1<Menu, Decoration>> buttonFactory) {
+                    Function3<Integer, Integer, DataSource<ItemStack>, Function1<Menu, MenuItem>> buttonFactory) {
         super(id, player, name, height, toScala(collection), visualize, area, borderFiller, buttonFactory);
     }
 
@@ -29,15 +29,15 @@ public class ListView<A> extends hohserg.inventorymenu.menu.ListView {
                            Function1<A, ItemStack> visualize,
                            Area area,
                            ItemStack borderFiller,
-                           Function3<Integer, Integer, DataSource<ItemStack>, Function1<Menu, Decoration>> buttonFactory) {
+                           Function3<Integer, Integer, DataSource<ItemStack>, Function1<Menu, MenuItem>> buttonFactory) {
         super(id, player, name, height, toScala(collection), visualize, area, borderFiller, buttonFactory);
     }
 
-    private static <K, V> TraversableOnce<Tuple2<K, V>> toScala(MapObservable<K, V> collection) {
+    private static <K, V> CollectionWithTraitConversions.JMapWrapper<K, V> toScala(MapObservable<K, V> collection) {
         return CollectionWithTraitConversions.convert(collection);
     }
 
-    private static <A> TraversableOnce<A> toScala(CollectionObservable<A> collection) {
+    private static <A> CollectionWithTraitConversions.JTraversableOnceWrapper<A> toScala(CollectionObservable<A> collection) {
         return CollectionWithTraitConversions.convert(collection);
     }
 
@@ -47,7 +47,7 @@ public class ListView<A> extends hohserg.inventorymenu.menu.ListView {
                                                                 Function1<A, ItemStack> visualize,
                                                                 Area area,
                                                                 ItemStack borderFiller,
-                                                                Function3<Integer, Integer, DataSource<ItemStack>, Function1<Menu, Decoration>> buttonFactory,
+                                                                Function3<Integer, Integer, DataSource<ItemStack>, Function1<Menu, MenuItem>> buttonFactory,
                                                                 Function1<hohserg.inventorymenu.menu.Menu, MenuItem>... menuItems) {
         return (String id, Player player) -> {
             ListView<A> r = new ListView<>(id, player, title, height, collection,
@@ -66,11 +66,14 @@ public class ListView<A> extends hohserg.inventorymenu.menu.ListView {
                                                                    Function1<Tuple2<K, V>, ItemStack> visualize,
                                                                    Area area,
                                                                    ItemStack borderFiller,
-                                                                   Function3<Integer, Integer, DataSource<ItemStack>, Function1<Menu, Decoration>> buttonFactory,
+                                                                   Function3<Integer, Integer, DataSource<ItemStack>, Function1<Menu, MenuItem>> buttonFactory,
                                                                    Function1<hohserg.inventorymenu.menu.Menu, MenuItem>... menuItems) {
         return (String id, Player player) -> {
             ListView<Tuple2<K, V>> r = new ListView<>(id, player, title, height, collection,
-                    visualize, area, borderFiller, buttonFactory);
+                    visualize,
+                    area,
+                    borderFiller,
+                    buttonFactory);
             r.addAll(menuItems);
             return r;
         };

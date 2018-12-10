@@ -1,11 +1,13 @@
 package hohserg.inventorymenu.menu
 
+import hohserg.inventorymenu.menu.menuitems.ImplicitUtils._
+
 import java.util
 import java.util.UUID
 
 import hohserg.inventorymenu.java.MenuFactory
 import hohserg.inventorymenu.menu.ListView.Area
-import hohserg.inventorymenu.menu.menuitems.Clickable.{ClickEvent, PartialClickHandler, PartialPartialClickHandler}
+import hohserg.inventorymenu.menu.menuitems.Clickable.{ClickEvent, PartialClickHandler}
 import hohserg.inventorymenu.menu.menuitems._
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
@@ -33,7 +35,7 @@ class Menu(id: String, val player: Player, val name: String, val height: Int) {
       (x, y) <- Area(0, 0, width - 1, height - 1)
       if !Area(1, 1, width - 2, height - 2).contains(x, y)
     }
-      this += Decoration(x, y).source(borderFiller).build
+      this += Decoration(x, y, borderFiller)
     this
   }
 

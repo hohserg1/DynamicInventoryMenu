@@ -1,12 +1,13 @@
 package hohserg.inventorymenu.menu
 
 import hohserg.inventorymenu.menu.ListView.Area
-import hohserg.inventorymenu.menu.menuitems.{Button, Clickable, Decoration, MenuItem}
+import hohserg.inventorymenu.menu.menuitems.Clickable.ClickHandler
+import hohserg.inventorymenu.menu.menuitems.ImplicitUtils._
+import hohserg.inventorymenu.menu.menuitems.{Button, Decoration, MenuItem}
 import hohserg.inventorymenu.notify.Observable
 import hohserg.inventorymenu.utils.ItemUtils._
 import org.bukkit.block.banner.PatternType
 import org.bukkit.entity.Player
-import org.bukkit.event.inventory.ClickType
 import org.bukkit.inventory.ItemStack
 import org.bukkit.{DyeColor, Material}
 
@@ -42,12 +43,12 @@ class ListView[A](id: String, player: Player, name: String,
       .addPageIndicator(x, y, color, text._2)
       .addScrollButton(1, x, y + 1, color, text._3)
 
-  private def listingPage(direction: Int): (Player, Clickable, ClickType) => Unit =
-    (_, _, _) => {
+  private def listingPage(direction: Int): ClickHandler = {
+    _ =>
       val newPage = source.page + direction
       if (newPage >= 0 && newPage < source.pageCount)
         source.page = newPage
-    }
+  }
 
   def addScrollButton(direction: Int, x: Int, y: Int, color: DyeColor, text: String): this.type =
     addScrollButton(direction, x, y, getIconFor(direction, color), text)

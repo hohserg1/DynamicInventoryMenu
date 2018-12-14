@@ -1,7 +1,9 @@
 package hohserg.inventorymenu.menu
 
 import hohserg.inventorymenu.menu.ListView.Area
-import hohserg.inventorymenu.menu.menuitems.{Button, Clickable, Decoration}
+import hohserg.inventorymenu.menu.menuitems.Clickable.ClickHandler
+import hohserg.inventorymenu.menu.menuitems.ImplicitUtils._
+import hohserg.inventorymenu.menu.menuitems.{Button, Decoration, MenuItem}
 import hohserg.inventorymenu.notify.Observable
 import hohserg.inventorymenu.utils.ItemUtils._
 import org.bukkit.block.banner.PatternType
@@ -17,7 +19,7 @@ class ListView[A](id: String, player: Player, name: String,
                   visualize: A => ItemStack,
                   area: Area,
                   borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE),
-                  buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => Decoration = Decoration.apply) extends Menu(id, player, name, height) {
+                  buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => MenuItem = Decoration.apply) extends Menu(id, player, name, height) {
 
   val source = ListedSource(collection, area.square, visualize)
   val page = source.getItem
@@ -41,12 +43,12 @@ class ListView[A](id: String, player: Player, name: String,
       .addPageIndicator(x, y, color, text._2)
       .addScrollButton(1, x, y + 1, color, text._3)
 
-  private def listingPage(direction: Int): (Player, Clickable) => Unit =
-    (_, _) => {
+  private def listingPage(direction: Int): ClickHandler = {
+    _ =>
       val newPage = source.page + direction
       if (newPage >= 0 && newPage < source.pageCount)
         source.page = newPage
-    }
+  }
 
   def addScrollButton(direction: Int, x: Int, y: Int, color: DyeColor, text: String): this.type =
     addScrollButton(direction, x, y, getIconFor(direction, color), text)
@@ -83,7 +85,7 @@ object ListView {
                collection: TraversableOnce[A] with Observable, visualize: A => ItemStack,
                area: Area,
                borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE),
-               buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => Decoration = Decoration.apply): (String, Player) => ListView[A] = {
+               buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => MenuItem = Decoration.apply): (String, Player) => ListView[A] = {
     new ListView[A](_, _, name, height, collection, visualize, area, borderFiller, buttonFactory)
   }
 

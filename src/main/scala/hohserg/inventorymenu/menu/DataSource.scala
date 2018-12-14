@@ -36,7 +36,7 @@ case class ListedSource[A](collection: TraversableOnce[A] with Observable, pageS
 
   private[this] var _page = 0
 
-  def page: Int = _page
+  @inline def page: Int = _page
 
   def page_=(value: Int): Unit = {
     _page = value

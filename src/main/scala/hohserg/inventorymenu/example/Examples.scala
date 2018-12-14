@@ -6,17 +6,19 @@ import java.util.concurrent.atomic.AtomicInteger
 
 import hohserg.inventorymenu.Main.plugin
 import hohserg.inventorymenu.menu.ListView.Area
+import hohserg.inventorymenu.menu.menuitems.Clickable.ClickEvent
+import hohserg.inventorymenu.menu.menuitems.{Button, Decoration}
 import hohserg.inventorymenu.menu.{DataSource, ListView, Menu, VariableSource}
-import hohserg.inventorymenu.menu.menuitems.{Button, Clickable, Decoration}
 import hohserg.inventorymenu.notify.{CollectionObservable, Observable, OpenObservable}
-import org.bukkit.{Bukkit, DyeColor, Location, Material}
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.inventory.meta.SkullMeta
+import org.bukkit.{Bukkit, DyeColor, Location, Material}
 
 import scala.collection.mutable
 
 object Examples {
+  import hohserg.inventorymenu.menu.menuitems.ImplicitUtils._
   val worldTime = new AtomicInteger with Observable
 
   def onEnable(): Unit = {
@@ -66,16 +68,19 @@ object Examples {
   val df = new SimpleDateFormat("EEEEE dd MMMMM yyyy")
 
   val menu1 = Menu.applyOrCreate(
-    new ListView[(Location, Date)](_, _,"My marks", 5,
+    new ListView[(Location, Date)](_, _, "My marks", 5,
       marks,
       { case (loc: Location, date: Date) => lorize(new ItemStack(Material.EMERALD), "" + loc.getBlockX + " " + loc.getBlockY + " " + loc.getBlockZ + " " + df.format(date)) },
       Area(1, 1, 7, 3))
       .addScroll(0, 2, DyeColor.RED, ("Вверх", "Страница %d/%d", "Вниз"))
-      += Button(8, 2, lorize(new ItemStack(Material.NETHER_STAR), "Добавить метку"), (player: Player, _: Clickable) => marks += player.getLocation -> new Date())
+      +=
+      Button(8, 2,
+        lorize(new ItemStack(Material.NETHER_STAR), "Добавить метку"),
+        { case ClickEvent(player, _, _) => marks += player.getLocation -> new Date() })
   )
 
   val menu2 = Menu.applyOrCreate(
-    new ListView(_, _, "TestListView",5, map, tupleToStack, Area(1, 1, 7, 3))
+    new ListView(_, _, "TestListView", 5, map, tupleToStack, Area(1, 1, 7, 3))
       .addScroll(0, 2, DyeColor.CYAN, ("Вверх", "Страница %d из %d", "Вниз"))
   )
   var i = 0

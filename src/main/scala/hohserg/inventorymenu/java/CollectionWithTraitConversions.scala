@@ -7,11 +7,11 @@ import scala.collection.{Iterator, Traversable}
 import collection.JavaConverters._
 
 object CollectionWithTraitConversions {
-  def convert[A](jc: JavaCollectionObservable[A]): TraversableOnce[A] with Observable = {
+  def convert[A](jc: JavaCollectionObservable[A]): JTraversableOnceWrapper[A] = {
     JTraversableOnceWrapper(jc)
   }
 
-  def convert[K, V](jc: MapObservable[K, V]): TraversableOnce[(K, V)] with Observable = {
+  def convert[K, V](jc: MapObservable[K, V]): JMapWrapper[K, V] = {
     JMapWrapper(jc)
   }
 

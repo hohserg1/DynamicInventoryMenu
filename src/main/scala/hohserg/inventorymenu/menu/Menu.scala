@@ -59,7 +59,7 @@ class Menu(id: String, val player: Player, val name: String, val height: Int) {
   def onClick(player: Player, clickedSlot: Int, clickType: ClickType): Unit = {
     val clickRequest =
       Option(clickedSlot)
-        .filter(_ < items.length)
+        .filter(items.indices contains _)
         .map(items.apply)
         .collect { case clickable: Clickable => (clickable, ClickEvent(player, clickable, clickType), clickable.clickHandler) }
         .filter { case (_, clickEvent, clickHandler) => clickHandler isDefinedAt clickEvent }

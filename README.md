@@ -1,6 +1,8 @@
 # DynamicInventoryMenu
 Powerful api for create dynamically updated bukkit ui
 
+## Now actual repo is https://github.com/hohserg1/DynamicInventoryMenu
+
 ### Development is continues
 
 

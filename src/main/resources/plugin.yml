@@ -1,4 +1,4 @@
-name: InventoryMenu
+name: DynamicInventoryMenu
 version: @version@
 main: hohserg.inventorymenu.PluginPreloader
 authors: [hohserg]

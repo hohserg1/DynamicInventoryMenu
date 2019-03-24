@@ -2,12 +2,12 @@ package hohserg.inventorymenu.notify
 
 import scala.collection.mutable
 
-trait OpenObservable[A, B] extends mutable.OpenHashMap[A, B] with Observable {
+trait OpenObservable[A, B] extends mutable.OpenHashMap[A, B] with ObservableImpl[mutable.OpenHashMap[A, B]] {
   override def ++=(xs: TraversableOnce[(A, B)]): OpenObservable.this.type = {
     canNotify = false
     val r = super.++=(xs)
     canNotify = true
-    notifyAllObjects()
+    sendToAll(this)
     r
   }
 
@@ -15,19 +15,19 @@ trait OpenObservable[A, B] extends mutable.OpenHashMap[A, B] with Observable {
     canNotify = false
     val r = super.--=(xs)
     canNotify = true
-    notifyAllObjects()
+    sendToAll(this)
     r
   }
 
   override def put(key: A, value: B): Option[B] = {
     val r = super.put(key, value)
-    notifyAllObjects()
+    sendToAll(this)
     r
   }
 
   override def remove(key: A): Option[B] = {
     val r = super.remove(key)
-    notifyAllObjects()
+    sendToAll(this)
     r
   }
 

@@ -26,7 +26,7 @@ case class CheckBox(menu: Menu, x: Int, y: Int, on: DataSource[ItemStack], off: 
   }
 
   override val source: DataSource[ItemStack] = VariableSource[Object](observable, _ => if (state) on.getItem else off.getItem)
-  source.addNotified(this)
+  source.addListener(this)
 }
 
 object CheckBox {

@@ -15,7 +15,7 @@ import scala.collection.mutable.ArrayBuffer
 
 class ListView[A](id: String, player: Player, name: String,
                   height: Int,
-                  collection: TraversableOnce[A] with Observable,
+                  collection: TraversableOnce[A] with Observable[TraversableOnce[A]],
                   visualize: A => ItemStack,
                   area: Area,
                   borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE),

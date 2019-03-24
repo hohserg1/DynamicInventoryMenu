@@ -10,7 +10,7 @@ trait MenuItem extends AbleNotify {
   def y: Int
   def source: DataSource[ItemStack]
 
-  source.addNotified(this)
+  source.addListener(this)
 
   protected def setInventoryContents(): Unit =
     menu.inv.setItem(x + y * 9, source.getItem)

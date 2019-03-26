@@ -1,36 +1,22 @@
 package hohserg.inventorymenu.menu.menuitems
 
-import hohserg.inventorymenu.menu.menuitems.Clickable.PartialClickHandler
-import hohserg.inventorymenu.menu.{DataSource, Menu, VariableSource}
-import hohserg.inventorymenu.notify.Observable
+import hohserg.inventorymenu.menu.Menu
+import hohserg.inventorymenu.menu.menuitems.Clickable.ClickEvent
+import hohserg.inventorymenu.notify.{Observable, Variable}
 import org.bukkit.inventory.ItemStack
 
-case class CheckBox(menu: Menu, x: Int, y: Int, on: DataSource[ItemStack], off: DataSource[ItemStack], onChangeState: PartialClickHandler, defaultState: Boolean) extends Clickable {
-  private[this] var _state: Boolean = defaultState
+case class CheckBox(menu: Menu, x: Int, y: Int, on: Observable[ItemStack], off: Observable[ItemStack], onChangeState: Observable[ClickEvent] => Unit, defaultState: Boolean) extends Clickable {
+  val state = Variable[Boolean](defaultState)
 
-  private val observable = new Object with Observable
+  def switchState(): Any = state.set(!state.get)
 
-  def state: Boolean = _state
+  override def source: Observable[ItemStack] = on.zip(off).zip(state).map { case ((on, off), state) => if (state) on else off }
 
-  private def state_=(value: Boolean): Unit = {
-    _state = value
-    observable.notifyAllObjects()
-  }
-
-  def switchState(): Any = state = !state
-
-  val clickHandler: PartialClickHandler = {
-    case ce =>
-      switchState()
-      onChangeState(ce)
-  }
-
-  override val source: DataSource[ItemStack] = VariableSource[Object](observable, _ => if (state) on.getItem else off.getItem)
-  source.addListener(this)
+  override def subscribeOnClickEvents: Observable[ClickEvent] => Unit = _.subscribe(_ => switchState())
 }
 
 object CheckBox {
-  def apply(x: Int, y: Int, on: DataSource[ItemStack], off: DataSource[ItemStack], onChangeState: PartialClickHandler, defaultState: Boolean = true): Menu => MenuItem =
+  def apply(x: Int, y: Int, on: Observable[ItemStack], off: Observable[ItemStack], onChangeState: Observable[ClickEvent] => Unit, defaultState: Boolean = true): Menu => MenuItem =
     new CheckBox(_, x, y, on, off, onChangeState, defaultState)
 
 }

@@ -1,3 +1,5 @@
 package hohserg.inventorymenu.notify
 
-case class Event[+A](value: A, timemark: Long)
+import org.bukkit.Bukkit
+
+case class Event[+A](value: A, timemark: Long = Bukkit.getWorlds.get(0).getFullTime)

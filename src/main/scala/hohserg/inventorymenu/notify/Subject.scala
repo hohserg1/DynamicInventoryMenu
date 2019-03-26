@@ -10,7 +10,7 @@ trait Subject[-I, +O] extends Observable[O] {
 
   private[notify] def subscribe(subscriber: Subject[O, _]): Unit
 
-  private[notify] def notify(event: Event[I]): Unit
+  private[inventorymenu] def notify(event: Event[I]): Unit
 
 }
 

@@ -1,9 +1,7 @@
-package hohserg.inventorymenu.menu.menuitems
+package hohserg.inventorymenu.menu
 
 import hohserg.inventorymenu.notify.{AbleNotify, Event, Observable}
 import org.bukkit.inventory.ItemStack
-
-import scala.language.implicitConversions
 
 object ImplicitUtils {
   implicit def stack2source(itemStack: ItemStack): Observable[ItemStack] = Observable.just(itemStack)

@@ -6,8 +6,8 @@ import java.util.UUID
 import hohserg.inventorymenu.java.MenuFactory
 import hohserg.inventorymenu.menu.ListView.Area
 import hohserg.inventorymenu.menu.menuitems.Clickable.ClickEvent
-import hohserg.inventorymenu.menu.menuitems.ImplicitUtils._
 import hohserg.inventorymenu.menu.menuitems._
+import hohserg.inventorymenu.notify.{Event, Observable}
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 import org.bukkit.event.inventory.ClickType
@@ -22,14 +22,15 @@ class Menu(id: String, val player: Player, val name: String, val height: Int) {
   private[menu] val holder = new MenuHolder(this, id)
 
   private[menu] val inv = Bukkit.createInventory(holder, size, name)
+
   val items = new Array[MenuItem](size)
 
   def ++=(button: Iterable[Menu => MenuItem]): this.type = {
-    button.foreach(+=)
+    button foreach +=
     this
   }
 
-  def addBorder(borderFiller: ItemStack): this.type = {
+  def addBorder(borderFiller: Observable[ItemStack]): this.type = {
     for {
       (x, y) <- Area(0, 0, width - 1, height - 1)
       if !Area(1, 1, width - 2, height - 2).contains(x, y)
@@ -51,33 +52,21 @@ class Menu(id: String, val player: Player, val name: String, val height: Int) {
     player openInventory inv
   }
 
-  def open(closingHandler: Menu => Unit) = {
-    this.closingHandler = Some(closingHandler)
-    player openInventory inv
-  }
-
   def onClick(player: Player, clickedSlot: Int, clickType: ClickType): Unit = {
-    val clickRequest =
-      Option(clickedSlot)
-        .filter(_ < items.length)
-        .map(items.apply)
-        .collect { case clickable: Clickable => (clickable, ClickEvent(player, clickable, clickType), clickable.clickHandler) }
-        .filter { case (_, clickEvent, clickHandler) => clickHandler isDefinedAt clickEvent }
-
-    _lastClicked = clickRequest.map(_._1)
-    clickRequest.foreach(i => i._3(i._2))
+    Option(clickedSlot)
+      .filter(items.indices.contains)
+      .map(items.apply)
+      .collect { case clickable: Clickable => clickable }
+      .foreach(clickable =>
+        clickable.clickStream.notify(
+          Event(
+            ClickEvent(player, clickable, clickType)
+          )
+        )
+      )
   }
 
-  private var _lastClicked: Option[Clickable] = None
-
-  def lastClicked: Option[Clickable] = _lastClicked
-
-  def onClose(): Unit = {
-    closingHandler.foreach(_ (this))
-    closingHandler = None
-  }
-
-  private var closingHandler: Option[Menu => Unit] = None
+  def onClose(): Unit = {}
 
   //java-support
   def add(button: Menu => MenuItem): Menu = this += button

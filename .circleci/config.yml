@@ -1,6 +1,6 @@
 version: 2.1
-orbs:
-  hello: circleci/hello-build@0.0.5
+#orbs:
+#  hello: circleci/hello-build@0.0.5
 workflows:
   "Hello Workflow":
     jobs:
@@ -13,6 +13,8 @@ commands:
       - run: gradlew build
 jobs:
   build:
+    docker:
+      - image: circleci/openjdk:8-jdk
     parallelism: 1
     resource_class: large
     working_directory: ~/
@@ -21,4 +23,5 @@ jobs:
         - master
         - ci_configurating_temp
     steps:
+      - checkout
       - run: make build1

@@ -11,7 +11,7 @@ trait CollectionObservable[A] extends mutable.Builder[A, Iterable[A]] with Shrin
 
   override def transform: TraversableOnce[A] => TraversableOnce[A] = identity
 
-  var canNotify = true
+  private var canNotify = true
 
   override def ++=(xs: TraversableOnce[A]): CollectionObservable.this.type = {
     canNotify = false
@@ -39,6 +39,13 @@ trait CollectionObservable[A] extends mutable.Builder[A, Iterable[A]] with Shrin
     val r = super.-=(elem)
     sendToAll(this)
     r
+  }
+
+  override def clear(): Unit = {
+    canNotify = false
+    super.clear()
+    canNotify = true
+    sendToAll(this)
   }
 
 }

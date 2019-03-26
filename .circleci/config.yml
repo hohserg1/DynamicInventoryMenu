@@ -21,4 +21,3 @@ jobs:
         - master
     steps:
       - run: make build1
-

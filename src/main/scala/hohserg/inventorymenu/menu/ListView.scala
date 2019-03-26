@@ -1,17 +1,15 @@
 package hohserg.inventorymenu.menu
 
 import hohserg.inventorymenu.menu.ListView.Area
-import hohserg.inventorymenu.menu.menuitems.Clickable.ClickHandler
+import hohserg.inventorymenu.menu.menuitems.Clickable.ClickEvent
 import hohserg.inventorymenu.menu.menuitems.ImplicitUtils._
 import hohserg.inventorymenu.menu.menuitems.{Button, Decoration, MenuItem}
-import hohserg.inventorymenu.notify.Observable
+import hohserg.inventorymenu.notify.{Observable, Variable}
 import hohserg.inventorymenu.utils.ItemUtils._
 import org.bukkit.block.banner.PatternType
 import org.bukkit.entity.Player
 import org.bukkit.inventory.ItemStack
 import org.bukkit.{DyeColor, Material}
-
-import scala.collection.mutable.ArrayBuffer
 
 class ListView[A](id: String, player: Player, name: String,
                   height: Int,
@@ -19,17 +17,24 @@ class ListView[A](id: String, player: Player, name: String,
                   visualize: A => ItemStack,
                   area: Area,
                   borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE),
-                  buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => MenuItem = Decoration.apply) extends Menu(id, player, name, height) {
+                  buttonFactory: (Int, Int, Observable[ItemStack]) => Menu => MenuItem = Decoration.apply) extends Menu(id, player, name, height) {
 
-  val source = ListedSource(collection, area.square, visualize)
-  val page = source.getItem
+  private val page = Variable[Int](0)
+
+  private val pageSize = area.square
+
+  private val source = collection zip page map { case (coll: TraversableOnce[A], page: Int) =>
+    val pageStart = page * pageSize
+    coll.toList.slice(pageStart, pageStart + pageSize).map(visualize)
+  }
+
 
   addBorder(borderFiller)
 
   for {
     (x, y) <- area
   }
-    this += buttonFactory(x, y, SelectedSource(page, x - area.x1 + (y - area.y1) * (area.x2 - area.x1 + 1), visualize))
+    this += buttonFactory(x, y, SelectedSource(source, x - area.x1 + (y - area.y1) * (area.x2 - area.x1 + 1), visualize))
 
   def getIconFor(direction: Int, color: DyeColor): ItemStack = {
     if (direction < 0)
@@ -43,11 +48,13 @@ class ListView[A](id: String, player: Player, name: String,
       .addPageIndicator(x, y, color, text._2)
       .addScrollButton(1, x, y + 1, color, text._3)
 
-  private def listingPage(direction: Int): ClickHandler = {
+  def pageCount: Int = math.ceil(collection.size.toDouble / pageSize).toInt
+
+  private def listingPage(direction: Int): Observable[ClickEvent] => Unit = {
     _ =>
-      val newPage = source.page + direction
-      if (newPage >= 0 && newPage < source.pageCount)
-        source.page = newPage
+      val newPage = page.get + direction
+      if (newPage >= 0 && newPage < pageCount)
+        page.set(newPage)
   }
 
   def addScrollButton(direction: Int, x: Int, y: Int, color: DyeColor, text: String): this.type =
@@ -57,7 +64,7 @@ class ListView[A](id: String, player: Player, name: String,
     this += Button(x, y, lorize(item, text), listingPage(direction))
 
   def addPageIndicator(x: Int, y: Int, item: ItemStack, text: String): this.type =
-    this += Decoration(x, y, VariableSource[ArrayBuffer[A] with Observable](page, _ => lorize(item, text.format(source.page + 1, source.pageCount))))
+    this += Decoration(x, y, page.map(i => lorize(item, text.format(i + 1, pageCount))))
 
   def addPageIndicator(x: Int, y: Int, color: DyeColor, text: String): this.type =
     addPageIndicator(x, y, banner(PatternType.BASE, color), text)
@@ -82,10 +89,10 @@ object ListView {
   //java_support
   def apply[A](name: String,
                height: Int,
-               collection: TraversableOnce[A] with Observable, visualize: A => ItemStack,
+               collection: TraversableOnce[A] with Observable[TraversableOnce[A]], visualize: A => ItemStack,
                area: Area,
                borderFiller: ItemStack = new ItemStack(Material.STAINED_GLASS_PANE),
-               buttonFactory: (Int, Int, DataSource[ItemStack]) => Menu => MenuItem = Decoration.apply): (String, Player) => ListView[A] = {
+               buttonFactory: (Int, Int, Observable[ItemStack]) => Menu => MenuItem = Decoration.apply): (String, Player) => ListView[A] = {
     new ListView[A](_, _, name, height, collection, visualize, area, borderFiller, buttonFactory)
   }
 

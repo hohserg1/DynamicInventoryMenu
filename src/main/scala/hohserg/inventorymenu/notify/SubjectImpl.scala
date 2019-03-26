@@ -17,13 +17,10 @@ trait SubjectImpl[I, O] extends Subject[I, O] {
     r
   }
 
-  def map[O2](f: O => O2): Observable[O2] = {
-    val r = new SubjectImpl[O, O2] {
+  def map[O2](f: O => O2): Observable[O2] =
+    pipe(new SubjectImpl[O, O2] {
       override val transform = f
-    }
-    this subscribe r
-    r
-  }
+    })
 
   override def zip[C](b: Observable[C]): Observable[(O, C)] = {
     val r = new Zip[O, C]
@@ -49,14 +46,15 @@ trait SubjectImpl[I, O] extends Subject[I, O] {
     r
   }
 
-  override def buffer(bufferingInterval: Long): Observable[Seq[O]] = {
-    val r = new Buffer[O](bufferingInterval)
-    this subscribe r
-    r
-  }
+  override def buffer(bufferingInterval: Long): Observable[Seq[O]] =
+    pipe(new Buffer[O](bufferingInterval))
 
-  override def filter(p: O => Boolean): Observable[O] = {
-    val r = new Filter[O](p)
+
+  override def filter(p: O => Boolean): Observable[O] =
+    pipe(new Filter[O](p))
+
+  private def pipe[O2](value: SubjectImpl[O, O2]): SubjectImpl[O, O2] = {
+    val r = value
     this subscribe r
     r
   }

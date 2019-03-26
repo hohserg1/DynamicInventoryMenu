@@ -2,7 +2,7 @@ package hohserg.inventorymenu.menu
 
 import hohserg.inventorymenu.menu.ListView.Area
 import hohserg.inventorymenu.menu.menuitems.Clickable.ClickEvent
-import hohserg.inventorymenu.menu.menuitems.ImplicitUtils._
+import ImplicitUtils._
 import hohserg.inventorymenu.menu.menuitems.{Button, Decoration, MenuItem}
 import hohserg.inventorymenu.notify.{Observable, Variable}
 import hohserg.inventorymenu.utils.ItemUtils._

@@ -1,11 +1,11 @@
 package hohserg.inventorymenu.notify.collection
 
-import hohserg.inventorymenu.notify.SubjectImpl
+import hohserg.inventorymenu.notify.subjects.Identity
 
 import scala.collection.generic.Shrinkable
 import scala.collection.mutable
 
-trait CollectionObservable[A] extends mutable.Builder[A, Iterable[A]] with Shrinkable[A] with SubjectImpl[TraversableOnce[A], TraversableOnce[A]] {
+trait CollectionObservable[A] extends mutable.Builder[A, Iterable[A]] with Shrinkable[A] with Identity[TraversableOnce[A]] {
   this: TraversableOnce[A] =>
   override val size: Int = 0
 

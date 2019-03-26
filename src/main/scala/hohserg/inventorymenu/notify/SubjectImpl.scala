@@ -11,7 +11,7 @@ trait SubjectImpl[I, O] extends Subject[I, O] {
   override def lastOption: Option[O] = stream.lastOption.map(_.value)
 
   override def startWith[O2 >: O](v: O2): Observable[O2] = {
-    val r = new Identity[O2]
+    val r = new Identity[O2] {}
     r.notify(Event(v, 0))
     this subscribe r
     r
@@ -33,7 +33,7 @@ trait SubjectImpl[I, O] extends Subject[I, O] {
   }
 
   override def merge[O2 <: C, C >: O](b: Observable[O2]): Observable[C] = {
-    val r = new Identity[C]
+    val r = new Identity[C] {}
     this subscribe r
     b subscribe r
     r

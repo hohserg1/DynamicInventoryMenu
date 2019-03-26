@@ -1,13 +1,21 @@
 package hohserg.inventorymenu.notify
 
 import hohserg.inventorymenu.notify.subjects._
-import org.bukkit.Bukkit
 
 import scala.collection.mutable
 
 trait SubjectImpl[I, O] extends Subject[I, O] {
 
   private[notify] val stream = new EventStream[O](size)
+
+  override def lastOption: Option[O] = stream.lastOption.map(_.value)
+
+  override def startWith[O2 >: O](v: O2): Observable[O2] = {
+    val r = new Identity[O2]
+    r.notify(Event(v, 0))
+    this subscribe r
+    r
+  }
 
   def map[O2](f: O => O2): Observable[O2] = {
     val r = new SubjectImpl[O, O2] {
@@ -53,15 +61,22 @@ trait SubjectImpl[I, O] extends Subject[I, O] {
     r
   }
 
+  def subscribe(subscriber: AbleNotify[O]): Unit = {
+    listeners2 += subscriber
+    if (!isHot)
+      stream.foreach(subscriber.notify)
+  }
 
-  def subscribe(subscriber: AbleNotify[O]): Unit = listeners2 += subscriber
-
-  private[notify] def subscribe(subscriber: Subject[O, _]): Unit = listeners += subscriber
+  private[notify] def subscribe(subscriber: Subject[O, _]): Unit = {
+    listeners += subscriber
+    if (!isHot)
+      stream.foreach(subscriber.notify)
+  }
 
   private val listeners = new mutable.HashSet[Subject[O, _]]
   private val listeners2 = new mutable.HashSet[AbleNotify[O]]
 
-  private[notify] def notify(event: Event[I]): Unit = {
+  private[inventorymenu] def notify(event: Event[I]): Unit = {
     val newEvent = Event(transform(event.value), event.timemark)
     stream += newEvent
     sendToAll(newEvent)
@@ -73,8 +88,6 @@ trait SubjectImpl[I, O] extends Subject[I, O] {
   }
 
   protected def sendToAll(newEvent: O): Unit = {
-    sendToAll(Event(newEvent, currentTime()))
+    sendToAll(Event(newEvent))
   }
-
-  protected def currentTime(): Long = Bukkit.getWorlds.get(0).getFullTime
 }

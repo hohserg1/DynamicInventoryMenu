@@ -1,42 +1,22 @@
 package hohserg.inventorymenu.notify
 
-import org.bukkit.Bukkit
+trait Observable[+O] {
+  def subscribe(subscriber: AbleNotify[O]): Unit
 
-import scala.collection.mutable
+  private[notify] def subscribe(subscriber: Subject[O, _]): Unit
 
-trait Observable[+B] {
-  protected def currentTime(): Long = Bukkit.getWorlds.get(0).getFullTime
+  def map[O2](f: O => O2): Observable[O2]
 
-  private[notify] var canNotify = true
+  def zip[C](b: Observable[C]): Observable[(O, C)]
 
-  def subscribe(consumer: AbleNotify[B]): Unit
+  def merge[O2 <: C, C >: O](b: Observable[O2]): Observable[C]
 
-  def zip[C](c: Observable[C]): Observable[(B, C)]
+  def flatMap[O2](f: O => Observable[O2]): Observable[O2]
 
-  def map[C](f: B => C): Observable[C]
+  def flatten[O2](implicit asObservable: O => /*<:<!!!*/ Observable[O2]): Observable[O2]
 
-  def merge[C <: A, A >: B](b: Observable[C]): Observable[A]
-}
+  def buffer(bufferingInterval: Long): Observable[Seq[O]]
 
-object Observable {
-  def join[A](e: A*): Observable[A] = ???
-
-}
-
-trait ObservableImpl[B] extends Observable[B] {
-  protected val listeners = new mutable.HashSet[AbleNotify[B]]
-
-  protected def sendToAll(newEvent: Event[B]): Unit = {
-    if (canNotify)
-      listeners.foreach { consumer => consumer.notify(this, newEvent) }
-  }
-
-  protected def sendToAll(newEvent: B): Unit = {
-    sendToAll(Event(newEvent, currentTime()))
-  }
-
-  override def subscribe(consumer: AbleNotify[B]): Unit = {
-    listeners += consumer
-  }
+  def filter(p: O => Boolean): Observable[O]
 
 }

@@ -20,7 +20,7 @@ class EventStream[B](maxSize: Int) extends mutable.Buffer[Event[B]] {
 
 
   def +=(elem: Event[B], pos: Int): this.type = {
-    if (pos >= 0 && pos <= impl.size && impl(pos - 1).timeMark < elem.timeMark) {
+    if (pos >= 0 && pos <= impl.size && impl(pos - 1).timemark < elem.timemark) {
       impl.insert(pos, elem)
       this
     } else

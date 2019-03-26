@@ -19,5 +19,6 @@ jobs:
     branches:
       only:
         - master
+        - unstable-3
     steps:
       - run: make build1

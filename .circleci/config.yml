@@ -19,6 +19,6 @@ jobs:
     branches:
       only:
         - master
-        - unstable-3
+        - ci_configurating_temp
     steps:
       - run: make build1

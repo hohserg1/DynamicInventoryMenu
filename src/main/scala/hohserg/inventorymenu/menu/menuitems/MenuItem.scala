@@ -1,20 +1,22 @@
 package hohserg.inventorymenu.menu.menuitems
 
-import hohserg.inventorymenu.menu.{DataSource, Menu}
-import hohserg.inventorymenu.notify.AbleNotify
+import hohserg.inventorymenu.menu.Menu
+import hohserg.inventorymenu.notify.{AbleNotify, Event, Observable}
 import org.bukkit.inventory.ItemStack
 
-trait MenuItem extends AbleNotify {
+trait MenuItem extends AbleNotify[ItemStack] {
   def menu: Menu
+
   def x: Int
+
   def y: Int
-  def source: DataSource[ItemStack]
 
-  source.addListener(this)
+  def source: Observable[ItemStack]
 
-  protected def setInventoryContents(): Unit =
-    menu.inv.setItem(x + y * 9, source.getItem)
+  source subscribe this
 
+  override def notify(event: Event[ItemStack]): Unit = setInventoryContents(event.value)
 
-  def onNotified(): Unit = setInventoryContents()
+  protected def setInventoryContents(itemStack: ItemStack): Unit =
+    menu.inv.setItem(x + y * 9, itemStack)
 }

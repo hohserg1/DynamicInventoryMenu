@@ -1,6 +1,8 @@
 package hohserg.inventorymenu.notify
 
 trait Observable[+O] {
+  def isHot = true
+
   def subscribe(subscriber: AbleNotify[O]): Unit
 
   private[notify] def subscribe(subscriber: Subject[O, _]): Unit
@@ -18,5 +20,14 @@ trait Observable[+O] {
   def buffer(bufferingInterval: Long): Observable[Seq[O]]
 
   def filter(p: O => Boolean): Observable[O]
+
+  def startWith[O2 >: O](v: O2): Observable[O2]
+
+  def lastOption: Option[O]
+
+}
+
+object Observable {
+  def just[A](elems: A*): Observable[A] = ???
 
 }
